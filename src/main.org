@@ -1,0 +1,95 @@
+#+title: Main
+#+PROPERTY: header-args :tangle main.rs
+* Crates
+#+begin_src rust
+pub use std::process::Command;
+use colored::Colorize;
+#+end_src
+
+* Stucts
+** Exec
+*** Creating the exec Struct
+#+begin_src rust
+struct Exec {
+    cmd: String,
+    args: Vec<String>
+}
+
+impl Exec {
+#+end_src
+
+*** Get output
+#+begin_src rust
+fn get_output(&self) -> String {
+    let exec = &self.cmd;
+    let mut cmd = Command::new(exec);
+    for arg in self.args.iter() {
+        cmd.arg(arg);
+    }
+
+    match cmd.output() {
+        Ok(o) =>  {
+            unsafe {
+                // Make a string from the output of the command.
+                let mut str = String::from_utf8_unchecked(o.stdout);
+                // Remove the new line charactor and return the output
+                return trim_newline(&mut str);
+            }
+        },
+        Err(e) => {
+            println!("Err: {}", e);
+            return "N/A".to_string();
+        }
+    }
+}
+#+end_src
+
+*** End of Exec impl
+#+begin_src rust
+}
+#+end_src
+
+* Main function
+** Start main function
+#+begin_src rust
+fn main() {
+#+end_src
+
+** User@Host
+#+begin_src rust
+let user_name = Exec { cmd: "whoami".to_string(), args: vec![] };
+let host_name = Exec { cmd: "uname".to_string(), args: vec!["-n".to_string()] };
+
+println!("{}@{}", format!("{}", user_name.get_output()).blue().bold(), format!("{}", host_name.get_output()).green() );
+#+end_src
+
+** Kernel info
+#+begin_src rust
+let knl_name = Exec { cmd: "uname".to_string(), args: vec![] }; // Kernel name
+let knl_ver = Exec { cmd: "uname".to_string(), args: vec!["-r".to_string()] }; // Kernel Version
+
+println!("{} {} {}", format!("Kernel:").blue().bold(), knl_name.get_output(), format!("{}", knl_ver.get_output()).green() ); // Print output
+#+end_src
+
+** End main function
+#+begin_src rust
+}
+#+end_src
+
+
+
+
+* Common functions
+** Trim new line
+#+begin_src rust
+fn trim_newline(s: &mut String) -> String {
+    if s.ends_with('\n') {
+        s.pop();
+        if s.ends_with('\r') {
+            s.pop();
+        }
+    }
+    return s.to_string();
+}
+#+end_src
+
