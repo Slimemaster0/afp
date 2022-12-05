@@ -1,14 +1,57 @@
 #+title: Main
 #+PROPERTY: header-args :tangle main.rs
+
+* Table of Contents :toc:
+- [[#crates][Crates]]
+  - [[#std][std]]
+  - [[#colored][Colored]]
+  - [[#serde][Serde]]
+- [[#stucts][Stucts]]
+  - [[#exec][Exec]]
+  - [[#os-info][Os Info]]
+- [[#main-function][Main function]]
+  - [[#start-main-function][Start main function]]
+  - [[#load-config][Load Config]]
+  - [[#userhost][User@Host]]
+  - [[#kernel-info][Kernel info]]
+  - [[#end-main-function][End main function]]
+- [[#common-functions][Common functions]]
+  - [[#trim-new-line][Trim new line]]
+
 * Crates
+- [[std]]
+- [[Colored]]
+- [[Serde]]
+
+** std
 #+begin_src rust
-pub use std::process::Command;
-use colored::Colorize;
+pub use std::process::Command; // Executing commands
+#+end_src
+** Colored
+#+begin_src rust
+use colored::Colorize; // Colors
+#+end_src
+** Serde
+#+begin_src rust
+use serde::Deserialize; // Reading date
+use serde_json::Deserializer; // Reading json
 #+end_src
 
+#+RESULTS:
+: error: Could not compile `cargouoR8pQ`.
+
 * Stucts
+- [[Exec][Exec]]
+- [[Os Info][DistObj]]
+
 ** Exec
-*** Creating the exec Struct
+An object for that stores a command as a 'String' and the arguments as a 'Vector'
+Useage: let my_exec = Exec { cmd: "command".to_string(), args: vec!["arg1".to_string(), "arg2".to_string(), "arg3".to_string()] };
+
+*** List of functions
+- [[Run and get the output][get_output]]
+
+*** Creating the *Exec* Struct
 #+begin_src rust
 struct Exec {
     cmd: String,
@@ -18,11 +61,14 @@ struct Exec {
 impl Exec {
 #+end_src
 
-*** Get output
+*** Run and get the output
+A function for running the command with the args and returns the output as a String.
 #+begin_src rust
 fn get_output(&self) -> String {
     let exec = &self.cmd;
     let mut cmd = Command::new(exec);
+
+    // adding the arguments
     for arg in self.args.iter() {
         cmd.arg(arg);
     }
@@ -49,10 +95,45 @@ fn get_output(&self) -> String {
 }
 #+end_src
 
+** Os Info
+*** Create *DistObj* struct
+#+begin_src rust
+struct DistObj {
+    codename: String,
+    id: String,
+    like: String,
+    version: String,
+    version_parts: Vec<String>
+}
+
+impl DistObj {
+#+end_src
+
+*** Git Distro info
+**** Not implemented
+#+begin_src rust
+
+#+end_src
+
+*** End of *DisObj* struct impl
+#+begin_src rust
+}
+#+end_src
+
 * Main function
+- [[Load Config][Load The Config file]]
+- [[User@Host][Display the *user@host* line]]
+- [[Kernel info][Display the *kernel name and version number* ]]
+
 ** Start main function
 #+begin_src rust
 fn main() {
+#+end_src
+
+** Load Config
+**** Not implemented
+#+begin_src rust
+
 #+end_src
 
 ** User@Host
@@ -80,6 +161,8 @@ println!("{} {} {}", format!("Kernel:").blue().bold(), knl_name.get_output(), fo
 
 
 * Common functions
+- [[Trim new line][trim_newline]]
+
 ** Trim new line
 #+begin_src rust
 fn trim_newline(s: &mut String) -> String {

@@ -1,5 +1,9 @@
-pub use std::process::Command;
-use colored::Colorize;
+pub use std::process::Command; // Executing commands
+
+use colored::Colorize; // Colors
+
+use serde::Deserialize; // Reading date
+use serde_json::Deserializer; // Reading json
 
 struct Exec {
     cmd: String,
@@ -11,6 +15,8 @@ impl Exec {
 fn get_output(&self) -> String {
     let exec = &self.cmd;
     let mut cmd = Command::new(exec);
+
+    // adding the arguments
     for arg in self.args.iter() {
         cmd.arg(arg);
     }
@@ -33,7 +39,23 @@ fn get_output(&self) -> String {
 
 }
 
+struct DistObj {
+    codename: String,
+    id: String,
+    like: String,
+    version: String,
+    version_parts: Vec<String>
+}
+
+impl DistObj {
+
+
+
+}
+
 fn main() {
+
+
 
 let user_name = Exec { cmd: "whoami".to_string(), args: vec![] };
 let host_name = Exec { cmd: "uname".to_string(), args: vec!["-n".to_string()] };

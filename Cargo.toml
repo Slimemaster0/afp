@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 colored = "2.0.0"
 serde = "*"
-toml = "*"
+serde_json = "*"
