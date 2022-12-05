@@ -1,2 +1,2 @@
 #+title: RFetch
-A simple fetch program writen in rust with just 7 dependencies.
+A simple fetch program writen in rust with just 9 dependencies.
