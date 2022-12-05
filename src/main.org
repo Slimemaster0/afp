@@ -45,7 +45,7 @@ use serde_json::Deserializer; // Reading json
 - [[Os Info][DistObj]]
 
 ** Exec
-An object for that stores a command as a 'String' and the arguments as a 'Vector'
+An object for that stores a command as a *'String'* and the arguments as a *'Vector'*
 Useage: let my_exec = Exec { cmd: "command".to_string(), args: vec!["arg1".to_string(), "arg2".to_string(), "arg3".to_string()] };
 
 *** List of functions
@@ -62,7 +62,7 @@ impl Exec {
 #+end_src
 
 *** Run and get the output
-A function for running the command with the args and returns the output as a String.
+A function for *running the command* with the args and *returns the output* as a *String*.
 #+begin_src rust
 fn get_output(&self) -> String {
     let exec = &self.cmd;
@@ -90,7 +90,7 @@ fn get_output(&self) -> String {
 }
 #+end_src
 
-*** End of Exec impl
+*** End of *Exec* impl
 #+begin_src rust
 }
 #+end_src
@@ -121,7 +121,7 @@ impl DistObj {
 #+end_src
 
 * Main function
-- [[Load Config][Load The Config file]]
+- [[Load Config][Load The Config file *Not implemented yet* ]]
 - [[User@Host][Display the *user@host* line]]
 - [[Kernel info][Display the *kernel name and version number* ]]
 
