@@ -1,2 +1,2 @@
-#+title: RFetch
+#+title: Rustey
 A simple fetch program writen in rust with just 9 dependencies.
