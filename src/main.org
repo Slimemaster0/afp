@@ -33,7 +33,7 @@ use colored::Colorize; // Colors
 #+end_src
 ** Serde
 #+begin_src rust
-use serde::Deserialize; // Reading date
+use serde::Deserialize; // Reading data
 use serde_json::Deserializer; // Reading json
 #+end_src
 
