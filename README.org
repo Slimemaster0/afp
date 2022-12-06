@@ -1,2 +1,2 @@
 #+title: Rustey
-A simple fetch program writen in rust with just 9 dependencies.
+A fast sysfetch program writen in rust with just 9 dependencies.
