@@ -8,15 +8,18 @@
   - [[#serde][Serde]]
 - [[#stucts][Stucts]]
   - [[#exec][Exec]]
-  - [[#os-info][Os Info]]
+  - [[#os-info][Os info]]
 - [[#main-function][Main function]]
   - [[#start-main-function][Start main function]]
+  - [[#get-os-info][Get Os info]]
+  - [[#display-distro-info-and-version][Display Distro info and version]]
   - [[#load-config][Load Config]]
   - [[#userhost][User@Host]]
   - [[#kernel-info][Kernel info]]
   - [[#end-main-function][End main function]]
 - [[#common-functions][Common functions]]
   - [[#trim-new-line][Trim new line]]
+  - [[#os-info-1][Os info]]
 
 * Crates
 - [[std]]
@@ -27,22 +30,26 @@
 #+begin_src rust
 pub use std::process::Command; // Executing commands
 #+end_src
+
 ** Colored
 #+begin_src rust
 use colored::Colorize; // Colors
 #+end_src
+
 ** Serde
 #+begin_src rust
-use serde::Deserialize; // Reading data
-use serde_json::Deserializer; // Reading json
+pub use serde::{Deserialize, Serialize};
 #+end_src
 
 #+RESULTS:
 : error: Could not compile `cargouoR8pQ`.
 
+
+
+
+
 * Stucts
 - [[Exec][Exec]]
-- [[Os Info][DistObj]]
 
 ** Exec
 An object for that stores a command as a *'String'* and the arguments as a *'Vector'*
@@ -60,6 +67,9 @@ struct Exec {
 
 impl Exec {
 #+end_src
+
+#+RESULTS:
+: error: Could not compile `cargo98ZqjJ`.
 
 *** Run and get the output
 A function for *running the command* with the args and *returns the output* as a *String*.
@@ -95,32 +105,26 @@ fn get_output(&self) -> String {
 }
 #+end_src
 
-** Os Info
-*** Create *DistObj* struct
+** Os info
+*** Creating the *'Osinfo'* Struct
 #+begin_src rust
-struct DistObj {
+#[derive(Default, Clone, Deserialize)]
+#[allow(dead_code)]
+struct Osinfo {
     codename: String,
     id: String,
     like: String,
     version: String,
-    version_parts: Vec<String>
-}
-
-impl DistObj {
-#+end_src
-
-*** Git Distro info
-**** Not implemented
-#+begin_src rust
-
-#+end_src
-
-*** End of *DisObj* struct impl
-#+begin_src rust
 }
 #+end_src
+
+
+
+
+
 
 * Main function
+- [[Get Os Info][Get Os info]]
 - [[Load Config][Load The Config file *Not implemented yet* ]]
 - [[User@Host][Display the *user@host* line]]
 - [[Kernel info][Display the *kernel name and version number* ]]
@@ -130,11 +134,26 @@ impl DistObj {
 fn main() {
 #+end_src
 
+** Get Os info
+#+begin_src rust
+let osinfo = get_osinfo();
+#+end_src
+
+** Display Distro info and version
+#+begin_src rust
+println!("{} {} {}", format!("Distro:").blue().bold(), osinfo.id, format!("{}", osinfo.version).green() );
+#+end_src
+
+#+RESULTS:
+: error: Could not compile `cargoxx2nrN`.
+
+
 ** Load Config
-**** Not implemented
+**** Not implemented yet
 #+begin_src rust
 
 #+end_src
+
 
 ** User@Host
 #+begin_src rust
@@ -144,6 +163,7 @@ let host_name = Exec { cmd: "uname".to_string(), args: vec!["-n".to_string()] };
 println!("{}@{}", format!("{}", user_name.get_output()).blue().bold(), format!("{}", host_name.get_output()).green() );
 #+end_src
 
+
 ** Kernel info
 #+begin_src rust
 let knl_name = Exec { cmd: "uname".to_string(), args: vec![] }; // Kernel name
@@ -151,6 +171,7 @@ let knl_ver = Exec { cmd: "uname".to_string(), args: vec!["-r".to_string()] }; /
 
 println!("{} {} {}", format!("Kernel:").blue().bold(), knl_name.get_output(), format!("{}", knl_ver.get_output()).green() ); // Print output
 #+end_src
+
 
 ** End main function
 #+begin_src rust
@@ -176,3 +197,19 @@ fn trim_newline(s: &mut String) -> String {
 }
 #+end_src
 
+** Os info
+#+begin_src rust
+fn get_osinfo() -> Osinfo {
+    let info_command = Exec { cmd: "distro".to_string(), args: vec!["-j".to_string()] };
+
+    let info_json_string = info_command.get_output();
+    let info_json_str: &str = &info_json_string;
+
+    let osinfo: Osinfo = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
+
+    return osinfo;
+}
+#+end_src
+
+#+RESULTS:
+: error: Could not compile `cargoZqeOyR`.

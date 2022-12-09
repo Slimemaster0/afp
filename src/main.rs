@@ -2,8 +2,7 @@ pub use std::process::Command; // Executing commands
 
 use colored::Colorize; // Colors
 
-use serde::Deserialize; // Reading date
-use serde_json::Deserializer; // Reading json
+pub use serde::{Deserialize, Serialize};
 
 struct Exec {
     cmd: String,
@@ -39,21 +38,20 @@ fn get_output(&self) -> String {
 
 }
 
-struct DistObj {
+#[derive(Default, Clone, Deserialize)]
+#[allow(dead_code)]
+struct Osinfo {
     codename: String,
     id: String,
     like: String,
     version: String,
-    version_parts: Vec<String>
-}
-
-impl DistObj {
-
-
-
 }
 
 fn main() {
+
+let osinfo = get_osinfo();
+
+println!("{} {} {}", format!("Distro:").blue().bold(), osinfo.id, format!("{}", osinfo.version).green() );
 
 
 
@@ -77,4 +75,15 @@ fn trim_newline(s: &mut String) -> String {
         }
     }
     return s.to_string();
+}
+
+fn get_osinfo() -> Osinfo {
+    let info_command = Exec { cmd: "distro".to_string(), args: vec!["-j".to_string()] };
+
+    let info_json_string = info_command.get_output();
+    let info_json_str: &str = &info_json_string;
+
+    let osinfo: Osinfo = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
+
+    return osinfo;
 }
