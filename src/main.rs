@@ -1,4 +1,5 @@
 pub use std::process::Command; // Executing commands
+use std::env; // Reading the environment
 
 use colored::Colorize; // Colors
 
@@ -39,31 +40,50 @@ fn get_output(&self) -> String {
 }
 
 #[derive(Default, Clone, Deserialize)]
+struct OsinfoOpt {
+    HardwareVendor: Option<String>,
+    HardwareModel: Option<String>,
+    OperatingSystemPrettyName: Option<String>,
+    FirmwareVersion: Option<String>,
+    Hostname: Option<String>,
+    KernelName: Option<String>,
+    KernelRelease: Option<String>,
+}
+
+#[derive(Default, Clone, Deserialize)]
 #[allow(dead_code)]
 struct Osinfo {
-    codename: String,
-    id: String,
-    like: String,
-    version: String,
+    HardwareVendor: String,
+    HardwareModel: String,
+    OSPretty: String,
+    FirmwareVersion: String,
+    Hostname: String,
+    KernelName: String,
+    KernelRelease: String,
 }
 
 fn main() {
 
 let osinfo = get_osinfo();
 
-println!("{} {} {}", format!("Distro:").blue().bold(), osinfo.id, format!("{}", osinfo.version).green() );
+println!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty );
 
 
 
 let user_name = Exec { cmd: "whoami".to_string(), args: vec![] };
-let host_name = Exec { cmd: "uname".to_string(), args: vec!["-n".to_string()] };
 
-println!("{}@{}", format!("{}", user_name.get_output()).blue().bold(), format!("{}", host_name.get_output()).green() );
+println!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() );
 
-let knl_name = Exec { cmd: "uname".to_string(), args: vec![] }; // Kernel name
-let knl_ver = Exec { cmd: "uname".to_string(), args: vec!["-r".to_string()] }; // Kernel Version
+println!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Print output
 
-println!("{} {} {}", format!("Kernel:").blue().bold(), knl_name.get_output(), format!("{}", knl_ver.get_output()).green() ); // Print output
+println!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
+
+println!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
+
+match env::var("EDITOR") {
+    Ok(v) => println!("{} {}", format!("Editor:").blue().bold(), v),
+    Err(_e) => nop()
+};
 
 }
 
@@ -77,13 +97,39 @@ fn trim_newline(s: &mut String) -> String {
     return s.to_string();
 }
 
+fn unopt_String(opt: Option<String>) -> String {
+    match opt {
+        Some(s) => return s,
+        None => return "".to_string()
+    }
+}
+
+impl OsinfoOpt {
+    fn to_norm(self) -> Osinfo {
+        let opt = self;
+        let hwv: String = unopt_String(opt.HardwareVendor);
+        let hwm: String = unopt_String(opt.HardwareModel);
+        let ospn: String = unopt_String(opt.OperatingSystemPrettyName);
+        let fwv: String = unopt_String(opt.FirmwareVersion);
+        let hn: String = unopt_String(opt.Hostname);
+        let kn: String = unopt_String(opt.KernelName);
+        let kr: String = unopt_String(opt.KernelRelease);
+
+        let osi: Osinfo = Osinfo { HardwareVendor: hwv, HardwareModel: hwm, OSPretty: ospn, FirmwareVersion: fwv, Hostname: hn, KernelName: kn, KernelRelease: kr };
+
+        return osi;
+    }
+}
+
 fn get_osinfo() -> Osinfo {
-    let info_command = Exec { cmd: "distro".to_string(), args: vec!["-j".to_string()] };
+    let info_command = Exec { cmd: "hostnamectl".to_string(), args: vec!["--json=short".to_string()] };
 
     let info_json_string = info_command.get_output();
     let info_json_str: &str = &info_json_string;
 
-    let osinfo: Osinfo = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
+    let osinfo: OsinfoOpt = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
 
-    return osinfo;
+    return osinfo.to_norm();
 }
+
+fn nop() {}

@@ -16,10 +16,15 @@
   - [[#load-config][Load Config]]
   - [[#userhost][User@Host]]
   - [[#kernel-info][Kernel info]]
+  - [[#device][Device]]
+  - [[#vendor][Vendor]]
+  - [[#editor][Editor]]
   - [[#end-main-function][End main function]]
 - [[#common-functions][Common functions]]
   - [[#trim-new-line][Trim new line]]
+  - [[#convert-optiont-to-norm][Convert Option<T> to Norm]]
   - [[#os-info-1][Os info]]
+  - [[#nop][nop]]
 
 * Crates
 - [[std]]
@@ -29,6 +34,7 @@
 ** std
 #+begin_src rust
 pub use std::process::Command; // Executing commands
+use std::env; // Reading the environment
 #+end_src
 
 ** Colored
@@ -106,20 +112,35 @@ fn get_output(&self) -> String {
 #+end_src
 
 ** Os info
+*** Creating the *'OsinfoOpt'* Struct
+#+begin_src rust
+#[derive(Default, Clone, Deserialize)]
+struct OsinfoOpt {
+    HardwareVendor: Option<String>,
+    HardwareModel: Option<String>,
+    OperatingSystemPrettyName: Option<String>,
+    FirmwareVersion: Option<String>,
+    Hostname: Option<String>,
+    KernelName: Option<String>,
+    KernelRelease: Option<String>,
+}
+#+end_src
+
+
 *** Creating the *'Osinfo'* Struct
 #+begin_src rust
 #[derive(Default, Clone, Deserialize)]
 #[allow(dead_code)]
 struct Osinfo {
-    codename: String,
-    id: String,
-    like: String,
-    version: String,
+    HardwareVendor: String,
+    HardwareModel: String,
+    OSPretty: String,
+    FirmwareVersion: String,
+    Hostname: String,
+    KernelName: String,
+    KernelRelease: String,
 }
 #+end_src
-
-
-
 
 
 
@@ -134,6 +155,9 @@ struct Osinfo {
 fn main() {
 #+end_src
 
+#+RESULTS:
+: error: Could not compile `cargoj8OqfQ`.
+
 ** Get Os info
 #+begin_src rust
 let osinfo = get_osinfo();
@@ -141,7 +165,7 @@ let osinfo = get_osinfo();
 
 ** Display Distro info and version
 #+begin_src rust
-println!("{} {} {}", format!("Distro:").blue().bold(), osinfo.id, format!("{}", osinfo.version).green() );
+println!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty );
 #+end_src
 
 #+RESULTS:
@@ -151,27 +175,39 @@ println!("{} {} {}", format!("Distro:").blue().bold(), osinfo.id, format!("{}", 
 ** Load Config
 **** Not implemented yet
 #+begin_src rust
-
 #+end_src
 
 
 ** User@Host
 #+begin_src rust
 let user_name = Exec { cmd: "whoami".to_string(), args: vec![] };
-let host_name = Exec { cmd: "uname".to_string(), args: vec!["-n".to_string()] };
 
-println!("{}@{}", format!("{}", user_name.get_output()).blue().bold(), format!("{}", host_name.get_output()).green() );
+println!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() );
 #+end_src
 
 
 ** Kernel info
 #+begin_src rust
-let knl_name = Exec { cmd: "uname".to_string(), args: vec![] }; // Kernel name
-let knl_ver = Exec { cmd: "uname".to_string(), args: vec!["-r".to_string()] }; // Kernel Version
-
-println!("{} {} {}", format!("Kernel:").blue().bold(), knl_name.get_output(), format!("{}", knl_ver.get_output()).green() ); // Print output
+println!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Print output
 #+end_src
 
+** Device
+#+begin_src rust
+println!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
+#+end_src
+
+** Vendor
+#+begin_src rust
+println!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
+#+end_src
+
+** Editor
+#+begin_src rust
+match env::var("EDITOR") {
+    Ok(v) => println!("{} {}", format!("Editor:").blue().bold(), v),
+    Err(_e) => nop()
+};
+#+end_src
 
 ** End main function
 #+begin_src rust
@@ -197,19 +233,53 @@ fn trim_newline(s: &mut String) -> String {
 }
 #+end_src
 
+** Convert Option<T> to Norm
+*** String
+#+begin_src rust
+fn unopt_String(opt: Option<String>) -> String {
+    match opt {
+        Some(s) => return s,
+        None => return "".to_string()
+    }
+}
+#+end_src
+
+*** OsinfoOpt
+#+begin_src rust
+impl OsinfoOpt {
+    fn to_norm(self) -> Osinfo {
+        let opt = self;
+        let hwv: String = unopt_String(opt.HardwareVendor);
+        let hwm: String = unopt_String(opt.HardwareModel);
+        let ospn: String = unopt_String(opt.OperatingSystemPrettyName);
+        let fwv: String = unopt_String(opt.FirmwareVersion);
+        let hn: String = unopt_String(opt.Hostname);
+        let kn: String = unopt_String(opt.KernelName);
+        let kr: String = unopt_String(opt.KernelRelease);
+
+        let osi: Osinfo = Osinfo { HardwareVendor: hwv, HardwareModel: hwm, OSPretty: ospn, FirmwareVersion: fwv, Hostname: hn, KernelName: kn, KernelRelease: kr };
+
+        return osi;
+    }
+}
+#+end_src
+
 ** Os info
 #+begin_src rust
 fn get_osinfo() -> Osinfo {
-    let info_command = Exec { cmd: "distro".to_string(), args: vec!["-j".to_string()] };
+    let info_command = Exec { cmd: "hostnamectl".to_string(), args: vec!["--json=short".to_string()] };
 
     let info_json_string = info_command.get_output();
     let info_json_str: &str = &info_json_string;
 
-    let osinfo: Osinfo = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
+    let osinfo: OsinfoOpt = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
 
-    return osinfo;
+    return osinfo.to_norm();
 }
 #+end_src
 
-#+RESULTS:
-: error: Could not compile `cargoZqeOyR`.
+
+** nop
+#+begin_src rust
+fn nop() {}
+#+end_src
