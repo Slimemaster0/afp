@@ -1,0 +1,285 @@
+#+title: Main
+#+PROPERTY: header-args :tangle /dev/null
+
+*Unused*
+
+* Table of Contents :toc:
+- [[#crates][Crates]]
+  - [[#std][std]]
+  - [[#colored][Colored]]
+  - [[#serde][Serde]]
+- [[#stucts][Stucts]]
+  - [[#exec][Exec]]
+  - [[#os-info][Os info]]
+- [[#main-function][Main function]]
+  - [[#start-main-function][Start main function]]
+  - [[#get-os-info][Get Os info]]
+  - [[#load-config][Load Config]]
+  - [[#display-output][Display output]]
+  - [[#end-main-function][End main function]]
+- [[#common-functions][Common functions]]
+  - [[#trim-new-line][Trim new line]]
+  - [[#convert-optiont-to-norm][Convert Option<T> to Norm]]
+  - [[#os-info-1][Os info]]
+  - [[#nop][nop]]
+
+* Crates
+- [[std]]
+- [[Colored]]
+- [[Serde]]
+
+** std
+#+begin_src rust
+pub use std::process::Command; // Executing commands
+use std::env; // Reading the environment
+#+end_src
+
+** Colored
+#+begin_src rust
+use colored::Colorize; // Colors
+#+end_src
+
+** Serde
+#+begin_src rust
+pub use serde::{Deserialize, Serialize};
+#+end_src
+
+#+RESULTS:
+: error: Could not compile `cargouoR8pQ`.
+
+
+
+
+
+* Stucts
+- [[Exec][Exec]]
+
+** Exec
+An object for that stores a command as a *'String'* and the arguments as a *'Vector'*
+Useage: let my_exec = Exec { cmd: "command".to_string(), args: vec!["arg1".to_string(), "arg2".to_string(), "arg3".to_string()] };
+
+*** List of functions
+- [[Run and get the output][get_output]]
+
+*** Creating the *Exec* Struct
+#+begin_src rust
+struct Exec {
+    cmd: String,
+    args: Vec<String>
+}
+
+impl Exec {
+#+end_src
+
+#+RESULTS:
+: error: Could not compile `cargo98ZqjJ`.
+
+*** Run and get the output
+A function for *running the command* with the args and *returns the output* as a *String*.
+#+begin_src rust
+fn get_output(&self) -> String {
+    let exec = &self.cmd;
+    let mut cmd = Command::new(exec);
+
+    // adding the arguments
+    for arg in self.args.iter() {
+        cmd.arg(arg);
+    }
+
+    match cmd.output() {
+        Ok(o) =>  {
+            unsafe {
+                // Make a string from the output of the command.
+                let mut str = String::from_utf8_unchecked(o.stdout);
+                // Remove the new line charactor and return the output
+                return trim_newline(&mut str);
+            }
+        },
+        Err(e) => {
+            println!("Err: {}", e);
+            return "N/A".to_string();
+        }
+    }
+}
+#+end_src
+
+*** End of *Exec* impl
+#+begin_src rust
+}
+#+end_src
+
+** Os info
+*** Creating the *'OsinfoOpt'* Struct
+#+begin_src rust
+#[derive(Default, Clone, Deserialize)]
+struct OsinfoOpt {
+    HardwareVendor: Option<String>,
+    HardwareModel: Option<String>,
+    OperatingSystemPrettyName: Option<String>,
+    FirmwareVersion: Option<String>,
+    Hostname: Option<String>,
+    KernelName: Option<String>,
+    KernelRelease: Option<String>,
+}
+#+end_src
+
+
+*** Creating the *'Osinfo'* Struct
+#+begin_src rust
+#[derive(Default, Clone, Deserialize)]
+#[allow(dead_code)]
+struct Osinfo {
+    HardwareVendor: String,
+    HardwareModel: String,
+    OSPretty: String,
+    FirmwareVersion: String,
+    Hostname: String,
+    KernelName: String,
+    KernelRelease: String,
+}
+#+end_src
+
+
+
+* Main function
+- [[Get Os Info][Get Os info]]
+- [[Load Config][Load The Config file *Not implemented yet* ]]
+
+** Start main function
+#+begin_src rust
+fn main() {
+#+end_src
+
+#+RESULTS:
+: error: Could not compile `cargoj8OqfQ`.
+
+** Get Os info
+#+begin_src rust
+let osinfo = get_osinfo();
+#+end_src
+
+** Load Config
+**** Not implemented yet
+#+begin_src rust
+#+end_src
+
+
+** Display output
+*** Distro Name
+#+begin_src rust
+println!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty );
+#+end_src
+
+
+*** User@Host
+#+begin_src rust
+let user_name = Exec { cmd: "whoami".to_string(), args: vec![] };
+
+println!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() );
+#+end_src
+
+
+*** Kernel info
+#+begin_src rust
+println!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Print output
+#+end_src
+
+*** Device
+#+begin_src rust
+println!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
+#+end_src
+
+*** Vendor
+#+begin_src rust
+println!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
+#+end_src
+
+*** Editor
+#+begin_src rust
+match env::var("EDITOR") {
+    Ok(v) => println!("{} {}", format!("Editor:").blue().bold(), v),
+    Err(_e) => nop()
+};
+#+end_src
+
+** End main function
+#+begin_src rust
+}
+#+end_src
+
+
+
+
+* Common functions
+- [[Trim new line][trim_newline]]
+- [[Convert Option<T> to Norm][unopt_T]]
+- [[Os info][get_osinfo]]
+- [[nop]]
+
+** Trim new line
+#+begin_src rust
+fn trim_newline(s: &mut String) -> String {
+    if s.ends_with('\n') {
+        s.pop();
+        if s.ends_with('\r') {
+            s.pop();
+        }
+    }
+    return s.to_string();
+}
+#+end_src
+
+** Convert Option<T> to Norm
+- [[String][unopt_String]]
+- [[OsinfoOpt][OsinfoOpt - to_norm]]
+*** String
+#+begin_src rust
+fn unopt_String(opt: Option<String>) -> String {
+    match opt {
+        Some(s) => return s,
+        None => return "".to_string()
+    }
+}
+#+end_src
+
+*** OsinfoOpt
+#+begin_src rust
+impl OsinfoOpt {
+    fn to_norm(self) -> Osinfo {
+        let opt = self;
+        let hwv: String = unopt_String(opt.HardwareVendor);
+        let hwm: String = unopt_String(opt.HardwareModel);
+        let ospn: String = unopt_String(opt.OperatingSystemPrettyName);
+        let fwv: String = unopt_String(opt.FirmwareVersion);
+        let hn: String = unopt_String(opt.Hostname);
+        let kn: String = unopt_String(opt.KernelName);
+        let kr: String = unopt_String(opt.KernelRelease);
+
+        let osi: Osinfo = Osinfo { HardwareVendor: hwv, HardwareModel: hwm, OSPretty: ospn, FirmwareVersion: fwv, Hostname: hn, KernelName: kn, KernelRelease: kr };
+
+        return osi;
+    }
+}
+#+end_src
+
+** Os info
+#+begin_src rust
+fn get_osinfo() -> Osinfo {
+    let info_command = Exec { cmd: "hostnamectl".to_string(), args: vec!["--json=short".to_string()] };
+
+    let info_json_string = info_command.get_output();
+    let info_json_str: &str = &info_json_string;
+
+    let osinfo: OsinfoOpt = serde_json::from_str(&info_json_str).expect("Err: could not parse json.");
+
+    return osinfo.to_norm();
+}
+#+end_src
+
+
+** nop
+A port of the asm function *'nop'* (Does nothing)
+
+#+begin_src rust
+fn nop() {}
+#+end_src
