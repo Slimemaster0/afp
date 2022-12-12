@@ -7,7 +7,7 @@ A fast sysfetch program inspired by [[https://github.com/lclarkmichalek/archey3]
 * Faq (Probably)
 
 - Q: What does *AFP* mean?
-  A: Another Fetch Program
+- A: Another Fetch Program
 
 - Q: Why does this program use *org* instead of *Markdown*?
-  Q: Because in the start the program was written in org
+- Q: Because in the start the program was written in org
