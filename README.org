@@ -1,2 +1,10 @@
 #+title: AFP
 A fast sysfetch program inspired by [[https://github.com/lclarkmichalek/archey3][Archey3]] and [[https://github.com/HorlogeSkynet/archey4][Archey4]] writen in rust with 18 dependencies.
+
+* Table of contents :toc:
+- [[#faq-][Faq ()]]
+
+* Faq (Probably)
+
+Q: What does AFP mean?
+A: Another Fetch Program
