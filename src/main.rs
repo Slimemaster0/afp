@@ -1,14 +1,20 @@
+// --- Use Section ---
+mod logo;
+
+// crate
+use crate::logo::gen_logo;
 // std
 pub use std::process::Command; // Executing commands
 use std::env; // Reading the environment
 
-// Colord
+// colored
 use colored::Colorize; // Colors
 
-// Serde
+// serde
 pub use serde::{Deserialize, Serialize};
+// --- End of Use Section ---
 
-
+// --- Struct Section ---
 struct Exec { // A struct for running commands
     cmd: String, // The command
     args: Vec<String> // The arguments
@@ -54,7 +60,7 @@ struct OsinfoOpt {
 
 #[derive(Default, Clone, Deserialize)]
 #[allow(dead_code)]
-struct Osinfo {
+pub struct Osinfo {
     HardwareVendor: String,
     HardwareModel: String,
     OSPretty: String,
@@ -63,25 +69,28 @@ struct Osinfo {
     KernelName: String,
     KernelRelease: String,
 }
+// --- End of Struct section ---
 
 fn main() { // main function
     let osinfo = get_osinfo(); // get the OS information
     let user_name = Exec { cmd: "whoami".to_string(), args: vec![] }; // prepare the whoami command 
+    let mut distro_logo = gen_logo(&osinfo);
 
-    println!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty ); // Prints the distro name
-    println!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() ); // Prints the user name and the hostname
-    println!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Prints the kernel name and version
-    println!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel ); // Prints the hardware model
-    println!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor ); // Prints the hardware vendor
+    println!("{} {} {}", distro_logo.display(), format!("Distro:").blue().bold(), osinfo.OSPretty ); // Prints the distro name
+    println!("{} {}@{}", distro_logo.display(), format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() ); // Prints the user name and the hostname
+    println!("{} {} {} {}", distro_logo.display(), format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Prints the kernel name and version
+    println!("{} {} {}", distro_logo.display(), format!("Device:").blue().bold(), osinfo.HardwareModel ); // Prints the hardware model
+    println!("{} {} {}", distro_logo.display(), format!("Vendor:").blue().bold(), osinfo.HardwareVendor ); // Prints the hardware vendor
 
     match env::var("EDITOR") { // Looks for the editor EnvVar
-        Ok(v) => println!("{} {}", format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
         Err(_e) => nop() // Does nothing
     };
+
+    for _ in 0..distro_logo.remain { println!("{}", distro_logo.display()); } // Prints the rest of the distro logo
 }
 
-// Common functions
-
+// --- Common functions ---
 fn trim_newline(s: &mut String) -> String { // Trims new line chars
     if s.ends_with('\n') {
         s.pop();
