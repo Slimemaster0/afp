@@ -138,4 +138,4 @@ fn get_osinfo() -> Osinfo { // Returns the OS information as 'Osinfo'
     return osinfo.to_norm(); // Converts osinfo from OsinfoOpt to Osinfo and returns it
 }
 
-fn nop() {} // A function does nothing™
+fn nop() {} // A function that does nothing™
