@@ -12,9 +12,14 @@ use colored::Colorize; // Colors
 
 // serde
 pub use serde::{Deserialize, Serialize};
+
+// systemstat
+use systemstat::{ System, Platform, saturating_sub_bytes }; // Hardware information
+use systemstat::platform::PlatformImpl;
 // --- End of Use Section ---
 
 // --- Struct Section ---
+// --- Exec ---
 struct Exec { // A struct for running commands
     cmd: String, // The command
     args: Vec<String> // The arguments
@@ -42,8 +47,8 @@ impl Exec {
             }
         }
     }
-    // End of impl Exec
 }
+// --- End of Exec Struct ---
 
 
 
@@ -71,16 +76,37 @@ pub struct Osinfo {
 }
 // --- End of Struct section ---
 
-fn main() { // main function
-    let osinfo = get_osinfo(); // get the OS information
-    let user_name = Exec { cmd: "whoami".to_string(), args: vec![] }; // prepare the whoami command 
-    let mut distro_logo = gen_logo(&osinfo);
+// --- Constants ---
 
-    println!("{} {} {}", distro_logo.display(), format!("Distro:").blue().bold(), osinfo.OSPretty ); // Prints the distro name
-    println!("{} {}@{}", distro_logo.display(), format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name.get_output()).green() ); // Prints the user name and the hostname
-    println!("{} {} {} {}", distro_logo.display(), format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() ); // Prints the kernel name and version
-    println!("{} {} {}", distro_logo.display(), format!("Device:").blue().bold(), osinfo.HardwareModel ); // Prints the hardware model
-    println!("{} {} {}", distro_logo.display(), format!("Vendor:").blue().bold(), osinfo.HardwareVendor ); // Prints the hardware vendor
+// --- End of Constants ---
+
+fn main() { // main function
+    // --- Modules ---
+    // --- External Modules ---
+    let osinfo = get_osinfo(); // get the OS information
+    let user_name: String = get_user_name(); // get the user name
+    let mut distro_logo = gen_logo(&osinfo);
+    let sys = System::new();
+    let str_mem = str_mem_gen(&sys);
+
+    // --- Long modules ---
+
+    // --- Short Modules ---
+    let str_distro_name: String = format!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty ); 
+    let str_user_host_name: String = format!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name).green() );
+    let str_kernel: String = format!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() );
+    let str_device: String = format!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
+    let str_vendor: String = format!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
+
+    // --- End of modules ---
+
+    // --- Print ---
+    println!("{} {}", distro_logo.display(), str_distro_name ); // Prints the distro name
+    println!("{} {}", distro_logo.display(), str_user_host_name ); // Prints the user name and the hostname
+    println!("{} {}", distro_logo.display(), str_kernel ); // Prints the kernel name and version
+    println!("{} {}", distro_logo.display(), str_device ); // Prints the hardware model
+    println!("{} {}", distro_logo.display(), str_vendor ); // Prints the hardware vendor
+    println!("{} {}", distro_logo.display(), str_mem ); // Prints the memory memory useage
 
     match env::var("EDITOR") { // Looks for the editor EnvVar
         Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
@@ -88,7 +114,8 @@ fn main() { // main function
     };
 
     for _ in 0..distro_logo.remain { println!("{}", distro_logo.display()); } // Prints the rest of the distro logo
-}
+    // --- End of Print ---
+} // --- End of main ---
 
 // --- Common functions ---
 fn trim_newline(s: &mut String) -> String { // Trims new line chars
@@ -102,7 +129,6 @@ fn trim_newline(s: &mut String) -> String { // Trims new line chars
 }
 
 // Convert Option<T> to normal types
-
 fn unopt_String(opt: Option<String>) -> String { // Converts 'Option<String>' to 'String'
     match opt {
         Some(s) => return s, // Return the String
@@ -126,7 +152,13 @@ impl OsinfoOpt {
         return osi;
     }
 }
+// --- End of Convert Option<T> to normal types ---
 
+fn nop() {} // A function that does nothing™
+// --- End of common functions ---
+
+
+// --- Out of main function Modules ---
 fn get_osinfo() -> Osinfo { // Returns the OS information as 'Osinfo'
     let info_command = Exec { cmd: "hostnamectl".to_string(), args: vec!["--json=short".to_string()] }; // Returns the OS information as json 'String'
 
@@ -138,4 +170,35 @@ fn get_osinfo() -> Osinfo { // Returns the OS information as 'Osinfo'
     return osinfo.to_norm(); // Converts osinfo from OsinfoOpt to Osinfo and returns it
 }
 
-fn nop() {} // A function that does nothing™
+fn get_user_name() -> String {
+    match env::var("USER") {
+        Ok(v) => return v.to_string(),
+        Err(_) => return {
+            let command = Exec { cmd: "whoami".to_string(), args: vec![] };
+            return command.get_output();
+        }
+    }
+}
+
+fn str_mem_gen(sys: &PlatformImpl) -> String {
+    match sys.memory() {
+        Ok(mem) => {
+            let mem_used = saturating_sub_bytes(mem.total, mem.free); // Used memory
+
+            let free_frac: f64 = mem.total.as_u64() as f64 / mem_used.as_u64() as f64;
+
+            if free_frac >= 2.7 {
+                return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).green(), mem.total);
+            } else {
+                if free_frac >= 1.3 {
+                    return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).yellow(), mem.total);
+                } else {
+                    return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).red(), mem.total);
+                }
+            }
+            
+        },
+        Err(_) => return "FUNCTION FAILURE".to_string(),
+    }
+}
+

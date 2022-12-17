@@ -9,3 +9,4 @@ edition = "2021"
 colored = "2.0.0"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
+systemstat = "*"
