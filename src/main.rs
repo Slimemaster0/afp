@@ -6,6 +6,8 @@ use crate::logo::gen_logo;
 // std
 pub use std::process::Command; // Executing commands
 use std::env; // Reading the environment
+use std::fs::File; // Reading files
+use std::io::prelude::*;
 
 // colored
 use colored::Colorize; // Colors
@@ -87,7 +89,6 @@ fn main() { // main function
     let user_name: String = get_user_name(); // get the user name
     let mut distro_logo = gen_logo(&osinfo);
     let sys = System::new();
-    let str_mem = str_mem_gen(&sys);
 
     // --- Long modules ---
 
@@ -101,12 +102,13 @@ fn main() { // main function
     // --- End of modules ---
 
     // --- Print ---
-    println!("{} {}", distro_logo.display(), str_distro_name ); // Prints the distro name
     println!("{} {}", distro_logo.display(), str_user_host_name ); // Prints the user name and the hostname
+    println!("{} {}", distro_logo.display(), str_distro_name ); // Prints the distro name
     println!("{} {}", distro_logo.display(), str_kernel ); // Prints the kernel name and version
     println!("{} {}", distro_logo.display(), str_device ); // Prints the hardware model
     println!("{} {}", distro_logo.display(), str_vendor ); // Prints the hardware vendor
-    println!("{} {}", distro_logo.display(), str_mem ); // Prints the memory memory useage
+    println!("{} {}", distro_logo.display(), get_mem(&sys) ); // Prints the memory memory useage
+    println!("{} {}", distro_logo.display(), get_cpu_info(&sys)); // Prints the CPU information
 
     match env::var("EDITOR") { // Looks for the editor EnvVar
         Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
@@ -126,6 +128,7 @@ fn trim_newline(s: &mut String) -> String { // Trims new line chars
         }
     }
     return s.to_string();
+
 }
 
 // Convert Option<T> to normal types
@@ -180,7 +183,7 @@ fn get_user_name() -> String {
     }
 }
 
-fn str_mem_gen(sys: &PlatformImpl) -> String {
+fn get_mem(sys: &PlatformImpl) -> String {
     match sys.memory() {
         Ok(mem) => {
             let mem_used = saturating_sub_bytes(mem.total, mem.free); // Used memory
@@ -202,3 +205,37 @@ fn str_mem_gen(sys: &PlatformImpl) -> String {
     }
 }
 
+// --- CPU information ---
+fn get_cpu_info(sys: &PlatformImpl) -> String {
+    let mut file = File::open("/proc/cpuinfo").expect("Err: cannot open /proc/cpuinfo");
+
+    let mut cpuinfo = String::new();
+    file.read_to_string(&mut cpuinfo).expect("Err: cant read /proc/cpuinfo");
+    let cpu_vec: Vec<&str> = cpuinfo.split("\n").collect();
+
+    let model_name: Vec<&str> = cpu_vec[4].split(": ").collect();
+    let core_count: Vec<&str> = cpu_vec[12].split(": ").collect();
+    let thread_count: Vec<&str> = cpu_vec[10].split(": ").collect();
+
+    let cpu_temp = get_cpu_temp(&sys);
+
+    if cpu_temp != "FUNCTION FAILURE".to_string() {
+        return format!("{} {} ({}) [{}]", "CPU:".to_string().blue().bold(), model_name[1], core_count[1].green(), cpu_temp);
+    } else { return format!("{} {} ({})", "CPU:".to_string().blue().bold(), model_name[1], core_count[1].green()); }
+}
+
+fn get_cpu_temp(sys: &PlatformImpl) -> String { // CPU temperature (As celcius)
+    match sys.cpu_temp() {
+        Ok(temp_float) => {
+            let temp = temp_float as i32; // convert to int
+            match temp {
+                -300..=15 => return format!("{}{}", "°C".to_string().blue(), temp.to_string().blue()), // From -300° to 15° (Cold)
+                16..=29 => return format!("{}{}", "°C".to_string().green(), temp.to_string().green()), // From 16° to 29° (Very good)
+                30..=69 => return format!("{}{}", "°C".to_string().yellow(), temp.to_string().yellow()), // from 30 to 69° (Normal)
+                70..=10000 => return format!("{}{}", "°C".to_string().red(), temp.to_string().red()), // 70°+ (HOT)
+                _ => return format!("{}°C", temp.to_string())
+            }
+        },
+        Err(_) => return "FUNCTION FAILURE".to_string(),
+    }
+}
