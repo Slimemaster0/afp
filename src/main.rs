@@ -94,7 +94,7 @@ fn main() { // main function
 
     // --- Short Modules ---
     let str_distro_name: String = format!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty ); 
-    let str_user_host_name: String = format!("{}@{}", format!("{}", osinfo.Hostname).blue().bold(), format!("{}", user_name).green() );
+    let str_user_host_name: String = format!("{}@{}", format!("{}", user_name).green(), format!("{}", osinfo.Hostname).blue() );
     let str_kernel: String = format!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() );
     let str_device: String = format!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
     let str_vendor: String = format!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
