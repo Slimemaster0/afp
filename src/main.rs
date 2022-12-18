@@ -110,6 +110,25 @@ fn main() { // main function
     println!("{} {}", distro_logo.display(), get_mem(&sys) ); // Prints the memory memory useage
     println!("{} {}", distro_logo.display(), get_cpu_info(&sys)); // Prints the CPU information
 
+    match env::var("XDG_CURRENT_DESKTOP") { // Looks for the XDG_CURRENT_DESKTOP EnvVar
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("DE:").blue().bold(), v), // Prints the XDG_CURRENT_DESKTOP variable if it exits
+        Err(_e) => nop() // Does nothing
+    };
+
+    match env::var("XDG_SESSION_TYPE") { // Looks for the XDG_SESSION_TYPE EnvVar
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Session Type:").blue().bold(), v), // Prints the XDG_SESSION_TYPE variable if it exits
+        Err(_e) => nop() // Does nothing
+    };
+
+    match env::var("SHELL") { // Looks for the SHELL EnvVar
+        Ok(v) => { 
+            let shell: Vec<&str> = v.split("/").collect(); // Splits the string at '/'
+            println!("{} {} {}", distro_logo.display(), format!("Shell:").blue().bold(), shell[shell.len() -1]); // Prints the SHELL variable if it exits
+
+        },
+        Err(_e) => nop() // Does nothing
+    };
+
     match env::var("EDITOR") { // Looks for the editor EnvVar
         Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
         Err(_e) => nop() // Does nothing
@@ -229,10 +248,10 @@ fn get_cpu_temp(sys: &PlatformImpl) -> String { // CPU temperature (As celcius)
         Ok(temp_float) => {
             let temp = temp_float as i32; // convert to int
             match temp {
-                -300..=15 => return format!("{}{}", "°C".to_string().blue(), temp.to_string().blue()), // From -300° to 15° (Cold)
-                16..=29 => return format!("{}{}", "°C".to_string().green(), temp.to_string().green()), // From 16° to 29° (Very good)
-                30..=69 => return format!("{}{}", "°C".to_string().yellow(), temp.to_string().yellow()), // from 30 to 69° (Normal)
-                70..=10000 => return format!("{}{}", "°C".to_string().red(), temp.to_string().red()), // 70°+ (HOT)
+                -300..=15 => return format!("{}{}", temp.to_string().blue(), "°C".to_string().blue() ), // From -300° to 15° (Cold)
+                16..=29 => return format!("{}{}", temp.to_string().green(), "°C".to_string().green() ), // From 16° to 29° (Very good)
+                30..=69 => return format!("{}{}", temp.to_string().yellow(), "°C".to_string().yellow() ), // from 30 to 69° (Normal)
+                70..=10000 => return format!("{}{}", temp.to_string().red(), "°C".to_string().red() ), // 70°+ (HOT)
                 _ => return format!("{}°C", temp.to_string())
             }
         },
