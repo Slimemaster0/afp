@@ -27,8 +27,10 @@ pub fn gen_logo(os: &Osinfo) -> DistroLogo {
     let distro_name: &str = &os.OSPretty;
     match distro_name {
         "DEMO" => return demo(),
+        "Arch Linux" => return archlinux(),
         
         _ => return DistroLogo { remain: 0, logo_str: vec![format!("{}", format!("").white())], empty_line: "".to_string() }
+
     }
 }
 
@@ -49,3 +51,31 @@ fn demo() -> DistroLogo {
         empty_line: "         ".to_string() };
     return logo;
 }
+
+fn archlinux() -> DistroLogo {
+    let logo = DistroLogo { remain: 19,
+        logo_str: vec! [
+            format!("{}", format!("                  x                    ").blue().bold()),
+            format!("{}", format!("                 dMx                   ").blue().bold()),
+            format!("{}", format!("                dMMMO                  ").blue().bold()),
+            format!("{}", format!("               dMMMMMK                 ").blue().bold()),
+            format!("{}", format!("              dMMMMMMMN.               ").blue().bold()),
+            format!("{}", format!("             .MMMMMMMMMW.              ").blue().bold()),
+            format!("{}", format!("               MMMMMMMMMW,             ").blue().bold()),
+            format!("{}", format!("           .O:.'  MMMMMMMMc            ").blue().bold()),
+            format!("{}", format!("          .WMMMMNXWMMMMMMMMo           ").blue().bold()),
+            format!("{}", format!("         'WMMMMMMMMMMMMMMMMMx          ").blue().bold()),
+            format!("{}", format!("        ,MMMMMMMMMMMMMMMMMMMM0         ").blue().bold()),
+            format!("{}", format!("       :MMMMMMMMMMMMMMMMMMMMMMK        ").blue().bold()),
+            format!("{}", format!("      lMMMMMMMMMMMMMMMMMMMMMMMMN.      ").blue().bold()),
+            format!("{}", format!("     oMMMMMMMMMMM'   dMMMMMMMMMMW.     ").blue().bold()),
+            format!("{}", format!("    xMMMMMMMMMMW      ,MMMMMMMMMMM;    ").blue().bold()),
+            format!("{}", format!("   kMMMMMMMMMMM        cMMMMMMMMMMMl   ").blue().bold()),
+            format!("{}", format!("  OMMMMMMMMMMM          XMMMMMMMMNKO.  ").blue().bold()),
+            format!("{}", format!(" 0MMM                            xMMWd ").blue().bold()),
+            format!("{}", format!("K,                                   O0").blue().bold()),
+        ],
+        empty_line: "                                       ".to_string() };
+    return logo;
+}
+
