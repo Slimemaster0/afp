@@ -103,20 +103,20 @@ fn main() { // main function
 
     // --- Print ---
     println!("{} {}", distro_logo.display(), str_user_host_name ); // Prints the user name and the hostname
+
+    match env::var("XDG_SESSION_TYPE") { // Looks for the XDG_SESSION_TYPE EnvVar
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Session Type:").blue().bold(), v), // Prints the XDG_SESSION_TYPE variable if it exits
+        Err(_e) => nop() // Does nothing
+    };
+
     println!("{} {}", distro_logo.display(), str_distro_name ); // Prints the distro name
     println!("{} {}", distro_logo.display(), str_kernel ); // Prints the kernel name and version
     println!("{} {}", distro_logo.display(), str_device ); // Prints the hardware model
     println!("{} {}", distro_logo.display(), str_vendor ); // Prints the hardware vendor
     println!("{} {}", distro_logo.display(), get_mem(&sys) ); // Prints the memory memory useage
-    println!("{} {}", distro_logo.display(), get_cpu_info(&sys)); // Prints the CPU information
 
-    match env::var("XDG_CURRENT_DESKTOP") { // Looks for the XDG_CURRENT_DESKTOP EnvVar
-        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("DE:").blue().bold(), v), // Prints the XDG_CURRENT_DESKTOP variable if it exits
-        Err(_e) => nop() // Does nothing
-    };
-
-    match env::var("XDG_SESSION_TYPE") { // Looks for the XDG_SESSION_TYPE EnvVar
-        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Session Type:").blue().bold(), v), // Prints the XDG_SESSION_TYPE variable if it exits
+    match env::var("EDITOR") { // Looks for the editor EnvVar
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
         Err(_e) => nop() // Does nothing
     };
 
@@ -129,8 +129,10 @@ fn main() { // main function
         Err(_e) => nop() // Does nothing
     };
 
-    match env::var("EDITOR") { // Looks for the editor EnvVar
-        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
+    println!("{} {}", distro_logo.display(), get_cpu_info(&sys)); // Prints the CPU information
+
+    match env::var("XDG_CURRENT_DESKTOP") { // Looks for the XDG_CURRENT_DESKTOP EnvVar
+        Ok(v) => println!("{} {} {}", distro_logo.display(), format!("DE:").blue().bold(), v), // Prints the XDG_CURRENT_DESKTOP variable if it exits
         Err(_e) => nop() // Does nothing
     };
 
