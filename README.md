@@ -6,3 +6,33 @@ A fast sysfetch program inspired by [Archey3](https://github.com/lclarkmichalek/
 ## Faq (Probably)
 - Q: What does **AFP** stand for?
 - A: Another Fetch Program
+
+## Configuration
+AFP is configured in json.
+The configuration is placed in 1 of 2 places.
+1. /etc/afp/config.json
+2. Depending on if $XDG_CONFIG_HOME is set of not. ( Usually $XDG_CONFIG_HOME isn't set or is set to $HOME/.config )
+  Yes -> $XDG_CONFIG_HOME/afp/config.json
+  No  -> $HOME/.config/afp/config.json
+
+If no config file is found, then AFP will use the default configuration.
+
+The default config:
+```json
+{
+    "logo": "auto",
+    "items": [
+        "user host",
+        "session type",
+        "distro",
+        "kernel",
+        "device",
+        "vendor",
+        "ram",
+        "editor",
+        "shell",
+        "cpu",
+        "de"
+    ]
+}
+```

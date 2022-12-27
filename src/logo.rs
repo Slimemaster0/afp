@@ -23,11 +23,15 @@ impl DistroLogo {
 }
 
 
-pub fn gen_logo(os: &Osinfo) -> DistroLogo {
-    let distro_name: &str = &os.OSPretty;
-    match distro_name {
+pub fn gen_logo(auto: &String, os: &String) -> DistroLogo {
+    let auto_str: &str = auto;
+    let os_str: &str = os;
+
+    match auto_str {
         "DEMO" => return demo(),
         "Arch Linux" => return archlinux(),
+        
+        "auto" => return gen_logo(&os, &os),
         
         _ => return DistroLogo { remain: 0, logo_str: vec![format!("{}", format!("").white())], empty_line: "".to_string() }
 

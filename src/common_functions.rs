@@ -98,7 +98,7 @@ pub fn get_home_dir() -> PathBuf { // --- Home directory ---
     }
 }
 
-pub fn get_config_dir() -> PathBuf { // --- Config directory ---
+pub fn get_config_dir() -> PathBuf { // Config directory   (XDG user dirs compliant)
     match env::var("XDG_CONFIG_HOME") {
         Ok(c) => { let path: PathBuf = PathBuf::from(c); return path; },
         Err(_) => { 

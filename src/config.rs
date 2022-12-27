@@ -2,19 +2,26 @@ use std::path::PathBuf;
 use crate::{ APP_NAME, CONFIG_FILE };
 use std::fs::File;
 use std::io::prelude::*;
+use serde::{ Serialize, Deserialize };
+
+// config struct
+#[derive(Serialize, Deserialize)]
+pub struct Config {
+    pub logo: String,
+    pub items: Vec<String>,
+}
 
 // --- Configuration ---
 // --- open config file ---
-fn read_config_file(cd: &mut PathBuf) -> String {
-    cd.push(APP_NAME);
-    cd.push(CONFIG_FILE);
+fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
+    cf.push(APP_NAME);
+    cf.push(CONFIG_FILE);
 
-    let mut syscd = PathBuf::from("/etc");
-    syscd.push(APP_NAME);
-    syscd.push(CONFIG_FILE);
+    let mut syscf = PathBuf::from("/etc");
+    syscf.push(APP_NAME);
+    syscf.push(CONFIG_FILE);
     
-
-    match File::open(cd) {
+    match File::open(cf) {
         Ok(f) => {
             let mut file: File = f;
             let mut config_file: String = String::new();
@@ -23,7 +30,7 @@ fn read_config_file(cd: &mut PathBuf) -> String {
         },
 
         Err(_) => {
-            match File::open(syscd) {
+            match File::open(syscf) { // try system wide config file
                 Ok(f) => {
                     let mut file: File = f;
                     let mut config_file: String = String::new();
@@ -33,7 +40,20 @@ fn read_config_file(cd: &mut PathBuf) -> String {
                 Err(_) => { // Default config
                     let config_string: String = r#"
 {
-    
+    "logo": "auto",
+    "items": [
+        "user host",
+        "session type",
+        "distro",
+        "kernel",
+        "device",
+        "vendor",
+        "ram",
+        "editor",
+        "shell",
+        "cpu",
+        "de"
+    ]
 }
 "#.to_string();
                     return config_string;
@@ -43,3 +63,10 @@ fn read_config_file(cd: &mut PathBuf) -> String {
     }
 }
 
+pub fn read_config(mut cf: &mut PathBuf) -> Config {
+    let contents_string: String = open_config_file(&mut cf);
+    let contents_str: &str = &contents_string; // Converts contents_string to &str
+
+    let config: Config = serde_json::from_str(contents_str).expect("Err: Could not parse config.json");
+    return config;
+}
