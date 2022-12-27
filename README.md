@@ -12,6 +12,7 @@ AFP is configured in json.
 The configuration is placed in 1 of 2 places.
 1. /etc/afp/config.json
 2. Depending on if $XDG_CONFIG_HOME is set of not. ( Usually $XDG_CONFIG_HOME isn't set or is set to $HOME/.config )
+
   Yes -> $XDG_CONFIG_HOME/afp/config.json
   No  -> $HOME/.config/afp/config.json
 
