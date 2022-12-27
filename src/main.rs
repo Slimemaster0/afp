@@ -78,7 +78,7 @@ fn main() { // main function
     for item_string in config.items.iter() {
         let item: &str = item_string;
         match item {
-                "user,host" => println!("{} {}", distro_logo.display(), str_user_host_name ), // Prints the user name and the hostname
+                "user host" => println!("{} {}", distro_logo.display(), str_user_host_name ), // Prints the user name and the hostname
 
                 "session type" => { match env::var("XDG_SESSION_TYPE") { // Looks for the XDG_SESSION_TYPE EnvVar
                     Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Session Type:").blue().bold(), v), // Prints the XDG_SESSION_TYPE variable if it exits
