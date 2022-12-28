@@ -24,8 +24,8 @@ pub fn get_cpu_info(sys: &PlatformImpl) -> String {
     let cpu_temp = get_cpu_temp(&sys); // Get the CPU temperature
 
     if cpu_temp != "FUNCTION FAILURE".to_string() { // Returning the CPU model, core count and temperature ( If afp was able to the temperature )
-        return format!("{} {} ({}) [{}]", "CPU:".to_string().blue().bold(), model_name[1], core_count[1].green(), cpu_temp);
-    } else { return format!("{} {} ({})", "CPU:".to_string().blue().bold(), model_name[1], core_count[1].green()); }
+        return format!("{} ({}) [{}]", model_name[1], core_count[1].green(), cpu_temp);
+    } else { return format!("{} ({})", model_name[1], core_count[1].green()); }
 }
 
 fn get_cpu_temp(sys: &PlatformImpl) -> String { // CPU temperature (As celcius)

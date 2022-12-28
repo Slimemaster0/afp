@@ -64,58 +64,53 @@ fn main() { // main function
     // --- Long modules ---
 
     // --- Short Modules ---
-    let str_distro_name: String = format!("{} {}", format!("Distro:").blue().bold(), osinfo.OSPretty ); 
+    let str_distro_name: String = format!("{}", osinfo.OSPretty ); 
     let str_user_host_name: String = format!("{}@{}", format!("{}", user_name).green(), format!("{}", osinfo.Hostname).blue() );
-    let str_kernel: String = format!("{} {} {}", format!("Kernel:").blue().bold(), osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() );
-    let str_device: String = format!("{} {}", format!("Device:").blue().bold(), osinfo.HardwareModel );
-    let str_vendor: String = format!("{} {}", format!("Vendor:").blue().bold(), osinfo.HardwareVendor );
+    let str_kernel: String = format!("{} {}", osinfo.KernelName, format!("{}", osinfo.KernelRelease).green() );
+    let str_device: String = format!("{}", osinfo.HardwareModel );
+    let str_vendor: String = format!("{}", osinfo.HardwareVendor );
 
     // --- End of modules ---
 
     // --- Print ---
 
 
-    for item_string in config.items.iter() {
-        let item: &str = item_string;
-        match item {
-                "user host" => println!("{} {}", distro_logo.display(), str_user_host_name ), // Prints the user name and the hostname
+    for current_item in config.items.iter() {
+        let item_type: &str = &current_item.mod_type;
+        let item_name: &str = &current_item.mod_name;
+        match item_type {
+            "builtin mod" => {
+                match item_name {
+                    "user host" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), str_user_host_name ), // Prints the user name and the hostname
 
-                "session type" => { match env::var("XDG_SESSION_TYPE") { // Looks for the XDG_SESSION_TYPE EnvVar
-                    Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Session Type:").blue().bold(), v), // Prints the XDG_SESSION_TYPE variable if it exits
-                    Err(_e) => nop() // Does nothing
-                }; 
-            },
+                    "distro" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), str_distro_name ), // Prints the distro name
+                    "kernel" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), str_kernel ), // Prints the kernel name and version
+                    "device" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), str_device ), // Prints the hardware model
+                    "vendor" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), str_vendor ), // Prints the hardware vendor
+                    "ram" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), get_mem(&sys) ), // Prints the memory memory useage
 
-            "distro" => println!("{} {}", distro_logo.display(), str_distro_name ), // Prints the distro name
-            "kernel" => println!("{} {}", distro_logo.display(), str_kernel ), // Prints the kernel name and version
-            "device" => println!("{} {}", distro_logo.display(), str_device ), // Prints the hardware model
-            "vendor" => println!("{} {}", distro_logo.display(), str_vendor ), // Prints the hardware vendor
-            "ram" => println!("{} {}", distro_logo.display(), get_mem(&sys) ), // Prints the memory memory useage
+                    "shell" => { match env::var("SHELL") { // Looks for the SHELL EnvVar
+                            Ok(v) => { 
+                                let shell: Vec<&str> = v.split("/").collect(); // Splits the string at '/'
+                                println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), shell[shell.len() -1]); // Prints the SHELL variable if it exits
 
-            "editor" => {match env::var("EDITOR") { // Looks for the editor EnvVar
-                    Ok(v) => println!("{} {} {}", distro_logo.display(), format!("Editor:").blue().bold(), v), // Prints the EDITOR variable if it exits
-                    Err(_e) => nop() // Does nothing
-                };
-            },
-
-            "shell" => { match env::var("SHELL") { // Looks for the SHELL EnvVar
-                    Ok(v) => { 
-                        let shell: Vec<&str> = v.split("/").collect(); // Splits the string at '/'
-                        println!("{} {} {}", distro_logo.display(), format!("Shell:").blue().bold(), shell[shell.len() -1]); // Prints the SHELL variable if it exits
-
+                            },
+                            Err(_e) => nop() // Does nothing
+                        };
                     },
-                    Err(_e) => nop() // Does nothing
-                };
+
+                    "cpu" => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), get_cpu_info(&sys)), // Prints the CPU information
+
+
+                    _ => println!("{}", distro_logo.display())
+                }
             },
-
-            "cpu" => println!("{} {}", distro_logo.display(), get_cpu_info(&sys)), // Prints the CPU information
-
-            "de" => { match env::var("XDG_CURRENT_DESKTOP") { // Looks for the XDG_CURRENT_DESKTOP EnvVar
-                    Ok(v) => println!("{} {} {}", distro_logo.display(), format!("DE:").blue().bold(), v), // Prints the XDG_CURRENT_DESKTOP variable if it exits
-                    Err(_e) => nop() // Does nothing
-                };
-            },
-
+            "env_var" => {
+                match env::var(item_name) {
+                    Ok(v) => println!("{}{}{}", distro_logo.display(), current_item.mod_title.blue().bold(), v),
+                    Err(_) => nop()
+                }
+            }
             _ => println!("{}", distro_logo.display())
         }
     }

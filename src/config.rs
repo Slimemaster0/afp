@@ -4,11 +4,19 @@ use std::fs::File;
 use std::io::prelude::*;
 use serde::{ Serialize, Deserialize };
 
+// printmodule struct
+#[derive(Serialize, Deserialize)]
+pub struct PrintMod {
+    pub mod_type: String, // Module type. like a builtin module or an Environment variable.
+    pub mod_name: String, // The name of the module, the name of the builtin module or environment variable.
+    pub mod_title: String,
+}
+
 // config struct
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub logo: String,
-    pub items: Vec<String>,
+    pub items: Vec<PrintMod>,
 }
 
 // --- Configuration ---
@@ -42,17 +50,61 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
 {
     "logo": "auto",
     "items": [
-        "user host",
-        "session type",
-        "distro",
-        "kernel",
-        "device",
-        "vendor",
-        "ram",
-        "editor",
-        "shell",
-        "cpu",
-        "de"
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "user host",
+            "mod_title": ""
+        },
+        {
+            "mod_type": "env_var",
+            "mod_name": "XDG_SESSION_TYPE",
+            "mod_title": "Session Type: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "distro",
+            "mod_title": "Distro: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "kernel",
+            "mod_title": "Kernel: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "device",
+            "mod_title": "Device: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "vendor",
+            "mod_title": "Vendor: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "ram",
+            "mod_title": "Memory: "
+        },
+        {
+            "mod_type": "env_var",
+            "mod_name": "EDITOR",
+            "mod_title": "Editor: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "shell",
+            "mod_title": "Shell: "
+        },
+        {
+            "mod_type": "builtin mod",
+            "mod_name": "cpu",
+            "mod_title": "CPU: "
+        },
+        {
+            "mod_type": "env_var",
+            "mod_name": "XDG_CURRENT_DESKTOP",
+            "mod_title": "DE: "
+        }
     ]
 }
 "#.to_string();

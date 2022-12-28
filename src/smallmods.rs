@@ -24,12 +24,12 @@ pub fn get_mem(sys: &PlatformImpl) -> String {
             let free_frac: f64 = mem.total.as_u64() as f64 / mem_used.as_u64() as f64;
 
             if free_frac >= 2.7 {
-                return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).green(), mem.total);
+                return format!("{}/{}", format!("{}", mem_used).green(), mem.total);
             } else {
                 if free_frac >= 1.3 {
-                    return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).yellow(), mem.total);
+                    return format!("{}/{}", format!("{}", mem_used).yellow(), mem.total);
                 } else {
-                    return format!("{} {}/{}", format!("Memory:").blue().bold(), format!("{}", mem_used).red(), mem.total);
+                    return format!("{}/{}", format!("{}", mem_used).red(), mem.total);
                 }
             }
             
