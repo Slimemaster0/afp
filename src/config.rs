@@ -7,9 +7,9 @@ use serde::{ Serialize, Deserialize };
 // printmodule struct
 #[derive(Serialize, Deserialize)]
 pub struct PrintMod {
-    pub mod_type: String, // Module type. like a builtin module or an Environment variable.
-    pub mod_name: String, // The name of the module, the name of the builtin module or environment variable.
-    pub mod_title: String,
+    pub module: String, // The name of the module, the name of the builtin module or environment variable.
+    pub title: String,
+    pub args: Vec<String>
 }
 
 // config struct
@@ -51,59 +51,59 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
     "logo": "auto",
     "items": [
         {
-            "mod_type": "builtin mod",
-            "mod_name": "user host",
-            "mod_title": ""
+            "module": "user host",
+            "args": [],
+            "title": ""
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "XDG_SESSION_TYPE",
-            "mod_title": "Session Type: "
+            "module": "env_var",
+            "args": [ "XDG_SESSION_TYPE" ],
+            "title": "Session Type: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "distro",
-            "mod_title": "Distro: "
+            "module": "distro",
+            "args": [],
+            "title": "Distro: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "kernel",
-            "mod_title": "Kernel: "
+            "module": "kernel",
+            "args": [],
+            "title": "Kernel: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "device",
-            "mod_title": "Device: "
+            "module": "device",
+            "args": [],
+            "title": "Device: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "vendor",
-            "mod_title": "Vendor: "
+            "module": "vendor",
+            "args": [],
+            "title": "Vendor: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "ram",
-            "mod_title": "Memory: "
+            "module": "ram",
+            "args": [],
+            "title": "Memory: "
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "EDITOR",
-            "mod_title": "Editor: "
+            "module": "env_var",
+            "args": [ "EDITOR" ],
+            "title": "Editor: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "shell",
-            "mod_title": "Shell: "
+            "module": "shell",
+            "args": [],
+            "title": "Shell: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "cpu",
-            "mod_title": "CPU: "
+            "module": "cpu",
+            "args": [],
+            "title": "CPU: "
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "XDG_CURRENT_DESKTOP",
-            "mod_title": "DE: "
+            "module": "env_var",
+            "args": [ "XDG_CURRENT_DESKTOP" ],
+            "title": "DE: "
         }
     ]
 }

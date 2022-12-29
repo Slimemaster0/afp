@@ -9,7 +9,7 @@ A fast sysfetch program inspired by [Archey3](https://github.com/lclarkmichalek/
 
 ## Configuration
 AFP is configured in json.
-The configuration is placed in 1 of 2 places.
+The configuration file is placed in 1 of 2 places.
 1. /etc/afp/config.json
 2. Depending on if $XDG_CONFIG_HOME is set of not. ( Usually $XDG_CONFIG_HOME isn't set or is set to $HOME/.config )
 
@@ -19,65 +19,77 @@ The configuration is placed in 1 of 2 places.
 
 If no config file is found, then AFP will use the default configuration.
 
+There is a "command" module that uses the first argument as the command and the rest as arguments.
+An example where you run the command "foo" with "--bar" as an argument.
+```json
+...
+        {
+	    "module": "command",
+	    "args": [ "foo", "--bar" ],
+	    "title": "Foo: "
+	},
+...
+```
+
 The default config:
 ```json
 {
     "logo": "auto",
     "items": [
         {
-            "mod_type": "builtin mod",
-            "mod_name": "user host",
-            "mod_title": ""
+            "module": "user host",
+            "args": [],
+            "title": ""
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "XDG_SESSION_TYPE",
-            "mod_title": "Session Type: "
+            "module": "env_var",
+            "args": [ "XDG_SESSION_TYPE" ],
+            "title": "Session Type: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "distro",
-            "mod_title": "Distro: "
+            "module": "distro",
+            "args": [],
+            "title": "Distro: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "kernel",
-            "mod_title": "Kernel: "
+            "module": "kernel",
+            "args": [],
+            "title": "Kernel: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "device",
-            "mod_title": "Device: "
+            "module": "device",
+            "args": [],
+            "title": "Device: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "vendor",
-            "mod_title": "Vendor: "
+            "module": "vendor",
+            "args": [],
+            "title": "Vendor: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "ram",
-            "mod_title": "Memory: "
+            "module": "ram",
+            "args": [],
+            "title": "Memory: "
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "EDITOR",
-            "mod_title": "Editor: "
+            "module": "env_var",
+            "args": [ "EDITOR" ],
+            "title": "Editor: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "shell",
-            "mod_title": "Shell: "
+            "module": "shell",
+            "args": [],
+            "title": "Shell: "
         },
         {
-            "mod_type": "builtin mod",
-            "mod_name": "cpu",
-            "mod_title": "CPU: "
+            "module": "cpu",
+            "args": [],
+            "title": "CPU: "
         },
         {
-            "mod_type": "env_var",
-            "mod_name": "XDG_CURRENT_DESKTOP",
-            "mod_title": "DE: "
+            "module": "env_var",
+            "args": [ "XDG_CURRENT_DESKTOP" ],
+            "title": "DE: "
         }
     ]
 }
