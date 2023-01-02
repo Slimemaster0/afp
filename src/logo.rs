@@ -1,16 +1,20 @@
 // use
-// Crate
-use crate::Osinfo;
 // Colored
 use colored::Colorize;
+use crate::color::Kolor;
+use crate::color::Kolor::*;
+use crate::color::str_colorize;
+use crate::string_ext::StringExt;
 
 // --- Structs ---
 pub struct DistroLogo {
     logo_str: Vec<String>, // the logo it self
     empty_line: String, // What to show when the full logo has been printed out.
-    pub remain: u8 // remaining lines
+    pub remain: u8, // remaining lines
+    pub color: Kolor
 }
 
+    
 // --- DistroLogo impl ---
 impl DistroLogo {
     pub fn display(&mut self) -> &String { // Display the current line of the logo.
@@ -23,17 +27,16 @@ impl DistroLogo {
 }
 
 
-pub fn gen_logo(auto: &String, os: &String) -> DistroLogo {
+pub fn gen_logo(auto: &String, os: &String, color: &Kolor) -> DistroLogo {
     let auto_str: &str = auto;
-    let os_str: &str = os;
 
     match auto_str {
         "DEMO" => return demo(),
-        "Arch Linux" => return archlinux(),
+        "Arch Linux" => return archlinux(color),
         
-        "auto" => return gen_logo(&os, &os),
+        "auto" => return gen_logo(&os, &os, color),
         
-        _ => return DistroLogo { remain: 0, logo_str: vec![format!("{}", format!("").white())], empty_line: "".to_string() }
+        _ => return DistroLogo { remain: 0, logo_str: vec![format!("{}", format!("").white())], empty_line: "".to_string(), color: Blue }
 
     }
 }
@@ -52,34 +55,36 @@ fn demo() -> DistroLogo {
         format!("{}", format!("--- 7 ---").blue().bold() ),
         format!("{}", format!("--- 8 ---").blue().bold() ),
         format!("{}", format!("--- 9 ---").blue().bold() ), ],
-        empty_line: "         ".to_string() };
+        empty_line: "         ".to_string(),
+        color: Blue };
     return logo;
 }
 
-fn archlinux() -> DistroLogo {
+fn archlinux(color: &Kolor) -> DistroLogo {
     let logo = DistroLogo { remain: 19,
         logo_str: vec! [
-            format!("{}", format!("                c                ").blue().bold()),
-            format!("{}", format!("               ;M:               ").blue().bold()),
-            format!("{}", format!("              .MMM'              ").blue().bold()),
-            format!("{}", format!("              cMMMW.             ").blue().bold()),
-            format!("{}", format!("                .MMW             ").blue().bold()),
-            format!("{}", format!("                  KMN            ").blue().bold()),
-            format!("{}", format!("           OOkd;   MMX           ").blue().bold()),
-            format!("{}", format!("          XMMMMMWc MMM0          ").blue().bold()),
-            format!("{}", format!("         KMMMMMMMMNMMMMO         ").blue().bold()),
-            format!("{}", format!("        0MMMMMMMMMMMMMMMx        ").blue().bold()),
-            format!("{}", format!("       OMMMMMMMMMMMMMMMMMl       ").blue().bold()),
-            format!("{}", format!("      xMMMMMMMMMMW0d:            ").blue().bold()),
-            format!("{}", format!("     dMMMMMMMMMMMMMMMWKx:.       ").blue().bold()),
-            format!("{}", format!("    cMMMMMMMMMMMMMMMMMMMMMKc     ").blue().bold()),
-            format!("{}", format!("   ,MMMMMMMMMMx     .MMMMMMMW.   ").blue().bold()),
-            format!("{}", format!("  .MMMMMMMMMMW       :MMMMMMMW.  ").blue().bold()),
-            format!("{}", format!(" .WMMMMMMMMMX         dMMMMMMMN  ").blue().bold()),
-            format!("{}", format!(".WMMMo                      .MMN ").blue().bold()),
-            format!("{}", format!("X                               ;").blue().bold()),
+            format!("{}",  str_colorize(format!("                c                ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("               ;M:               ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("              .MMM'              ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("              cMMMW.             ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("                .MMW             ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("                  KMN            ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("           OOkd;   MMX           ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("          XMMMMMWc MMM0          ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("         KMMMMMMMMNMMMMO         ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("        0MMMMMMMMMMMMMMMx        ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("       OMMMMMMMMMMMMMMMMMl       ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("      xMMMMMMMMMMW0d:            ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("     dMMMMMMMMMMMMMMMWKx:.       ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("    cMMMMMMMMMMMMMMMMMMMMMKc     ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("   ,MMMMMMMMMMx     .MMMMMMMW.   ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("  .MMMMMMMMMMW       :MMMMMMMW.  ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!(" .WMMMMMMMMMX         dMMMMMMMN  ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!(".WMMMo                      .MMN ").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
+            format!("{}",  str_colorize(format!("X                               ;").to_ref(), Kolor::Err.to_ref(), Kolor::Blue.to_ref(), color).bold()),
         ],
-        empty_line: "                                       ".to_string() };
+        empty_line: "                                       ".to_string(),
+        color: Blue };
     return logo;
 }
 

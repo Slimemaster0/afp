@@ -3,18 +3,21 @@ use crate::{ APP_NAME, CONFIG_FILE };
 use std::fs::File;
 use std::io::prelude::*;
 use serde::{ Serialize, Deserialize };
+use crate::color::Kolor;
 
 // printmodule struct
 #[derive(Serialize, Deserialize)]
 pub struct PrintMod {
     pub module: String, // The name of the module, the name of the builtin module or environment variable.
     pub title: String,
-    pub args: Vec<String>
+    pub args: Vec<String>,
+    pub color: Kolor
 }
 
 // config struct
 #[derive(Serialize, Deserialize)]
 pub struct Config {
+    pub color: Kolor,
     pub logo: String,
     pub items: Vec<PrintMod>,
 }
@@ -49,61 +52,73 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
                     let config_string: String = r#"
 {
     "logo": "auto",
+    "color": "None",
     "items": [
         {
             "module": "user host",
             "args": [],
-            "title": ""
+            "title": "",
+            "color": "None"
         },
         {
             "module": "env_var",
             "args": [ "XDG_SESSION_TYPE" ],
-            "title": "Session Type: "
+            "title": "Session Type: ",
+            "color": "None"
         },
         {
             "module": "distro",
             "args": [],
-            "title": "Distro: "
+            "title": "Distro: ",
+            "color": "None"
         },
         {
             "module": "kernel",
             "args": [],
-            "title": "Kernel: "
+            "title": "Kernel: ",
+            "color": "None"
         },
         {
             "module": "device",
             "args": [],
-            "title": "Device: "
+            "title": "Device: ",
+            "color": "None"
         },
         {
             "module": "vendor",
             "args": [],
-            "title": "Vendor: "
+            "title": "Vendor: ",
+            "color": "None"
         },
         {
             "module": "ram",
             "args": [],
-            "title": "Memory: "
+            "title": "Memory: ",
+            "color": "None"
         },
         {
             "module": "env_var",
             "args": [ "EDITOR" ],
-            "title": "Editor: "
+            "title": "Editor: ",
+            "color": "None"
         },
         {
             "module": "shell",
             "args": [],
-            "title": "Shell: "
+            "title": "Shell: ",
+            "color": "None"
         },
         {
             "module": "cpu",
             "args": [],
-            "title": "CPU: "
+            "title": "CPU: ",
+            "color": "None"
         },
         {
             "module": "env_var",
             "args": [ "XDG_CURRENT_DESKTOP" ],
-            "title": "DE: "
+            "title": "DE: ",
+            "color": "None"
         }
     ]
 }
