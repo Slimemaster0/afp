@@ -6,6 +6,7 @@ mod config;
 mod smallmods;
 mod color;
 mod string_ext;
+mod items;
 
 // crate
 use crate::common_functions::*;
@@ -15,6 +16,7 @@ use crate::cpu::*;
 use crate::config::*;
 use crate::Config;
 use crate::color::str_colorize;
+use crate::items::*;
 // std
 use std::path::PathBuf;
 pub use std::process::Command; // Executing commands
@@ -79,18 +81,17 @@ fn main() { // main function
 
     // --- Print ---
 
-    for current_item in config.items.iter() {
-        let item_name: &str = &current_item.module;
-        match item_name {
-            "user host" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_user_host_name ), // Prints the user name and the hostname
+    for kurrent_item in config.items.iter() {
+        match kurrent_item {
+            Item::UserHost(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_user_host_name ), // Prints the user name and the hostname
 
-            "distro" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_distro_name ), // Prints the distro name
-            "kernel" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_kernel ), // Prints the kernel name and version
-            "device" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_device ), // Prints the hardware model
-            "vendor" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_vendor ), // Prints the hardware vendor
-            "ram" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), get_mem(&sys) ), // Prints the memory memory useage
+            Item::Distro(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_distro_name ), // Prints the distro name
+            Item::Kernel(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_kernel ), // Prints the kernel name and version
+            Item::Device(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_device ), // Prints the hardware model
+            Item::Vendor(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_vendor ), // Prints the hardware vendor
+            Item::RAM(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), get_mem(&sys) ), // Prints the memory memory useage
 
-            "shell" => { match env::var("SHELL") { // Looks for the SHELL EnvVar
+            Item::Shell(current_item) => { match env::var("SHELL") { // Looks for the SHELL EnvVar
                     Ok(v) => { 
                         let shell: Vec<&str> = v.split("/").collect(); // Splits the string at '/'
                         println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), shell[shell.len() -1]); // Prints the SHELL variable if it exits
@@ -100,25 +101,23 @@ fn main() { // main function
                 };
             },
 
-            "cpu" => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), get_cpu_info(&sys)), // Prints the CPU information
+            Item::CPU(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), get_cpu_info(&sys)), // Prints the CPU information
 
 
-            "env_var" => {
-                match env::var(&current_item.args[0]) {
+            Item::EnvVar(current_item) => {
+                match env::var(&current_item.var) {
                     Ok(v) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), v),
                     Err(_) => nop()
                 }
             },
 
-            "command" => { 
-                let program: &str = &current_item.args[0];
+            Item::Command(current_item) => { 
+                let program: &str = &current_item.command;
                 let args = &current_item.args;
                 let command = Exec { cmd: program.to_string(), args: args.to_owned() };
                 
                 println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), command.get_output());
             },
-
-            _ => println!("{}", distro_logo.display() )
         }
     }
 

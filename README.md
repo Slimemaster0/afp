@@ -19,15 +19,17 @@ The configuration file is placed in 1 of 2 places.
 
 If no config file is found, then AFP will use the default configuration.
 
-There is a "command" module that uses the first argument as the command and the rest as arguments.
+There is a "command" module.
 
-An example where you run the command "foo" with "--bar" as an argument.
+An example where you run the command "foo" with "--bar" and "69" as arguments.
 ```json
 ...
         {
-	    "module": "command",
-	    "args": [ "foo", "--bar" ],
-	    "title": "Foo: "
+	    "Command": {
+	    	"command": "foo",
+	        "args": [ "--bar", "69" ],
+	        "title": "Foo: "
+	    }
 	},
 ...
 ```
@@ -39,70 +41,73 @@ The default config:
     "color": "None",
     "items": [
         {
-            "module": "user host",
-            "args": [],
-            "title": "",
-            "color": "None"
+            "UserHost": {
+                "title": "",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "XDG_SESSION_TYPE" ],
-            "title": "Session Type: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "XDG_SESSION_TYPE",
+                "title": "Session Type: ",
+                "color": "None"
+            }
         },
         {
-            "module": "distro",
-            "args": [],
-            "title": "Distro: ",
-            "color": "None"
+            "Distro": {
+                "title": "Distro: ",
+                "color": "None"
+            }
         },
         {
-            "module": "kernel",
-            "args": [],
-            "title": "Kernel: ",
-            "color": "None"
+            "Kernel": {
+                "title": "Kernel: ",
+                "color": "None"
+            }
         },
         {
-            "module": "device",
-            "args": [],
-            "title": "Device: ",
-            "color": "None"
+            "Device": {
+                "title": "Device: ",
+                "color": "None"
+            }
         },
         {
-            "module": "vendor",
-            "args": [],
-            "title": "Vendor: ",
-            "color": "None"
+            "Vendor": {
+                "title": "Vendor: ",
+                "color": "None"
+            }
         },
         {
-            "module": "ram",
-            "args": [],
-            "title": "Memory: ",
-            "color": "None"
+            "RAM": {
+                "title": "Memory: ",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "EDITOR" ],
-            "title": "Editor: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "EDITOR",
+                "title": "Editor: ",
+                "color": "None"
+            }
         },
         {
-            "module": "shell",
-            "args": [],
-            "title": "Shell: ",
-            "color": "None"
+            "Shell": {
+                "title": "Shell: ",
+                "color": "None"
+            }
         },
         {
-            "module": "cpu",
-            "args": [],
-            "title": "CPU: ",
-            "color": "None"
+            "CPU": {
+                "title": "CPU: ",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "XDG_CURRENT_DESKTOP" ],
-            "title": "DE: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "XDG_CURRENT_DESKTOP",
+                "title": "DE: ",
+                "color": "None"
+            }
         }
     ]
 }

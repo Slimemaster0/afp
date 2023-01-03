@@ -1,26 +1,27 @@
+// --- Use section ---
+// Standard
 use std::path::PathBuf;
-use crate::{ APP_NAME, CONFIG_FILE };
 use std::fs::File;
 use std::io::prelude::*;
-use serde::{ Serialize, Deserialize };
+// Crate
+use crate::{ APP_NAME, CONFIG_FILE };
 use crate::color::Kolor;
+use crate::items::*;
+// Serde
+use serde::{ Serialize, Deserialize };
+// --- End of use section ---
 
-// printmodule struct
-#[derive(Serialize, Deserialize)]
-pub struct PrintMod {
-    pub module: String, // The name of the module, the name of the builtin module or environment variable.
-    pub title: String,
-    pub args: Vec<String>,
-    pub color: Kolor
-}
 
+// --- Struct section ---
 // config struct
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub color: Kolor,
     pub logo: String,
-    pub items: Vec<PrintMod>,
+    pub items: Vec<Item>,
 }
+// --- End of struct section ---
+
 
 // --- Configuration ---
 // --- open config file ---
@@ -48,81 +49,87 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
                     file.read_to_string(&mut config_file).expect("Err: could not read config.json");
                     return config_file;
                 }
-                Err(_) => { // Default config
+                Err(_) => {
+
+// --- Default config ---
                     let config_string: String = r#"
 {
     "logo": "auto",
     "color": "None",
     "items": [
         {
-            "module": "user host",
-            "args": [],
-            "title": "",
-            "color": "None"
+            "UserHost": {
+                "title": "",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "XDG_SESSION_TYPE" ],
-            "title": "Session Type: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "XDG_SESSION_TYPE",
+                "title": "Session Type: ",
+                "color": "None"
+            }
         },
         {
-            "module": "distro",
-            "args": [],
-            "title": "Distro: ",
-            "color": "None"
+            "Distro": {
+                "title": "Distro: ",
+                "color": "None"
+            }
         },
         {
-            "module": "kernel",
-            "args": [],
-            "title": "Kernel: ",
-            "color": "None"
+            "Kernel": {
+                "title": "Kernel: ",
+                "color": "None"
+            }
         },
         {
-            "module": "device",
-            "args": [],
-            "title": "Device: ",
-            "color": "None"
+            "Device": {
+                "title": "Device: ",
+                "color": "None"
+            }
         },
         {
-            "module": "vendor",
-            "args": [],
-            "title": "Vendor: ",
-            "color": "None"
+            "Vendor": {
+                "title": "Vendor: ",
+                "color": "None"
+            }
         },
         {
-            "module": "ram",
-            "args": [],
-            "title": "Memory: ",
-            "color": "None"
+            "RAM": {
+                "title": "Memory: ",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "EDITOR" ],
-            "title": "Editor: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "EDITOR",
+                "title": "Editor: ",
+                "color": "None"
+            }
         },
         {
-            "module": "shell",
-            "args": [],
-            "title": "Shell: ",
-            "color": "None"
+            "Shell": {
+                "title": "Shell: ",
+                "color": "None"
+            }
         },
         {
-            "module": "cpu",
-            "args": [],
-            "title": "CPU: ",
-            "color": "None"
+            "CPU": {
+                "title": "CPU: ",
+                "color": "None"
+            }
         },
         {
-            "module": "env_var",
-            "args": [ "XDG_CURRENT_DESKTOP" ],
-            "title": "DE: ",
-            "color": "None"
+            "EnvVar": {
+                "var": "XDG_CURRENT_DESKTOP",
+                "title": "DE: ",
+                "color": "None"
+            }
         }
     ]
 }
 "#.to_string();
+// --- End of Default config ---
                     return config_string;
                 }
             }
