@@ -3,6 +3,7 @@ use serde::{ Serialize, Deserialize };
 
 #[derive(Serialize, Deserialize)]
 pub enum Item {
+    LineCount(LineCount),
     EnvVar(EnvVar),
     Command(Kommand),
     UserHost(UserHost),
@@ -13,6 +14,15 @@ pub enum Item {
     RAM(Memory),
     Shell(Shell),
     CPU(CPU)
+}
+
+// Line count
+#[derive(Serialize, Deserialize)]
+pub struct LineCount {
+    pub command: String,
+    pub args: Vec<String>,
+    pub title: String,
+    pub color: Kolor
 }
 
 // Environment Valueble

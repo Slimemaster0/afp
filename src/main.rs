@@ -17,6 +17,7 @@ use crate::config::*;
 use crate::Config;
 use crate::color::str_colorize;
 use crate::items::*;
+use std::env::args;
 // std
 use std::path::PathBuf;
 pub use std::process::Command; // Executing commands
@@ -118,6 +119,12 @@ fn main() { // main function
                 
                 println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), command.get_output());
             },
+            Item::LineCount(current_item) => {
+                let command = Exec { cmd: current_item.command.to_owned(), args: current_item.args.to_owned() };
+                let output = command.get_output();
+                let output_vec: Vec<&str> = output.split("\n").collect();
+                println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), &output_vec.len()); // Prints the SHELL variable if it exits
+            }
         }
     }
 

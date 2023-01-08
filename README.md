@@ -19,7 +19,7 @@ The configuration file is placed in 1 of 2 places.
 
 If no config file is found, then AFP will use the default configuration.
 
-There is a "command" module.
+There is a "Command" module and a "LineCount" that is configured in the same way.
 
 An example where you run the command "foo" with "--bar" and "69" as arguments.
 ```json
