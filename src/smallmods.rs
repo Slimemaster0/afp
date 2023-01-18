@@ -16,7 +16,7 @@ pub fn get_user_name() -> String {
     }
 }
 
-pub fn get_mem(sys: &PlatformImpl) -> String {
+pub async fn get_mem(sys: &PlatformImpl) -> String {
     match sys.memory() {
         Ok(mem) => {
             let mem_used = saturating_sub_bytes(mem.total, mem.free); // Used memory

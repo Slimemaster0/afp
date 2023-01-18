@@ -1,7 +1,7 @@
 use crate::color::{Kolor, self};
 use serde::{ Serialize, Deserialize };
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum Item {
     LineCount(LineCount),
     EnvVar(EnvVar),
@@ -17,7 +17,7 @@ pub enum Item {
 }
 
 // Line count
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct LineCount {
     pub command: String,
     pub args: Vec<String>,
@@ -26,7 +26,7 @@ pub struct LineCount {
 }
 
 // Environment Valueble
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct EnvVar {
     pub var: String,
     pub title: String,
@@ -34,7 +34,7 @@ pub struct EnvVar {
 }
 
 // Command
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Kommand {
     pub command: String,
     pub args: Vec<String>,
@@ -43,50 +43,50 @@ pub struct Kommand {
 }
 
 // UserHost
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UserHost {
     pub title: String,
     pub color: Kolor
 }
 
 // Distro
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Distro {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Kernel {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Device {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Vendor {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Memory {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Shell {
     pub title: String,
     pub color: Kolor
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct  CPU {
     pub title: String,
     pub color: Kolor

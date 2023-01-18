@@ -7,6 +7,7 @@ mod smallmods;
 mod color;
 mod string_ext;
 mod items;
+mod prepare_commands;
 
 // crate
 use crate::common_functions::*;
@@ -17,11 +18,12 @@ use crate::config::*;
 use crate::Config;
 use crate::color::str_colorize;
 use crate::items::*;
-use std::env::args;
+use crate::prepare_commands::*;
+
 // std
 use std::path::PathBuf;
-pub use std::process::Command; // Executing commands
-use std::env; // Reading the environment
+pub use std::process::Command;
+use std::env; // Reading the environment and useing the threads
 
 // colored
 use colored::Colorize; // Colors
@@ -31,6 +33,9 @@ pub use serde::{Deserialize, Serialize};
 
 // systemstat
 use systemstat::{ System, Platform }; // Hardware information
+
+// Future things
+use futures::executor::block_on;
 // --- End of Use Section ---
 
 // --- Struct Section ---
@@ -54,11 +59,15 @@ const APP_NAME: &str = "afp";
 const CONFIG_FILE: &str = "config.json";
 // --- End of Constants ---
 
-fn main() { // main function
+fn main() { block_on(async_main()) }
+
+async fn async_main() { // main function
     let _homedir: PathBuf = get_home_dir(); // get the home directory
     let mut configdir: PathBuf = get_config_dir(); // get the config directory
     // --- Configuration ---
     let config: Config = read_config(&mut configdir);
+
+    let output_vec_async = prepare_commands(&config.items); 
      
     // --- Modules ---
     // --- External Modules ---
@@ -66,6 +75,7 @@ fn main() { // main function
     let user_name: String = get_user_name(); // get the user name
     let mut distro_logo = gen_logo(&config.logo, &osinfo.OSPretty, &config.color);
     let sys = System::new();
+    let memory_async = get_mem(&sys);
     let mut logo_color_mut = &distro_logo.color;
     let logo_color = logo_color_mut.to_owned();
 
@@ -79,8 +89,14 @@ fn main() { // main function
     let str_vendor: String = format!("{}", osinfo.HardwareVendor );
 
     // --- End of modules ---
+    
+    // --- Synchrisation ---
+    let memory = memory_async.await;
+    let output_vec = output_vec_async.await;
+    // --- End of Synchrisation ---
 
     // --- Print ---
+    let mut counter = 0;
 
     for kurrent_item in config.items.iter() {
         match kurrent_item {
@@ -90,7 +106,12 @@ fn main() { // main function
             Item::Kernel(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_kernel ), // Prints the kernel name and version
             Item::Device(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_device ), // Prints the hardware model
             Item::Vendor(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), str_vendor ), // Prints the hardware vendor
-            Item::RAM(current_item) => println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), get_mem(&sys) ), // Prints the memory memory useage
+            Item::RAM(current_item) => {
+                
+                println!("{}{}{}", distro_logo.display(),
+                str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                memory ) // Prints the memory memory useage
+                }
 
             Item::Shell(current_item) => { match env::var("SHELL") { // Looks for the SHELL EnvVar
                     Ok(v) => { 
@@ -113,17 +134,15 @@ fn main() { // main function
             },
 
             Item::Command(current_item) => { 
-                let program: &str = &current_item.command;
-                let args = &current_item.args;
-                let command = Exec { cmd: program.to_string(), args: args.to_owned() };
-                
-                println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), command.get_output());
+                println!("{}{}{}", distro_logo.display(),
+                    str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                    &output_vec[counter]);
+                counter += 1;
             },
             Item::LineCount(current_item) => {
-                let command = Exec { cmd: current_item.command.to_owned(), args: current_item.args.to_owned() };
-                let output = command.get_output();
-                let output_vec: Vec<&str> = output.split("\n").collect();
-                println!("{}{}{}", distro_logo.display(), str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), &output_vec.len()); // Prints the SHELL variable if it exits
+                println!("{}{}{}", distro_logo.display(),
+                str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                &output_vec[counter]); // Prints out the line count of a command.
             }
         }
     }
