@@ -1,4 +1,4 @@
-use crate::color::{Kolor, self};
+use crate::color::Kolor;
 use serde::{ Serialize, Deserialize };
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -13,7 +13,8 @@ pub enum Item {
     Vendor(Vendor),
     RAM(Memory),
     Shell(Shell),
-    CPU(CPU)
+    CPU(CPU),
+    GPU(GPU),
 }
 
 // Line count
@@ -90,4 +91,11 @@ pub struct Shell {
 pub struct  CPU {
     pub title: String,
     pub color: Kolor
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct GPU {
+    pub title: String,
+    pub color: Kolor,
+    pub brand: bool
 }

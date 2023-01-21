@@ -114,6 +114,13 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
             }
         },
         {
+            "GPU": {
+                "title": "GPU$: ",
+                "color": "None",
+                "brand": true
+            }
+        },
+        {
             "CPU": {
                 "title": "CPU: ",
                 "color": "None"

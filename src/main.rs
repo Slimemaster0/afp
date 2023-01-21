@@ -8,6 +8,7 @@ mod color;
 mod string_ext;
 mod items;
 mod prepare_commands;
+mod gpu;
 
 // crate
 use crate::common_functions::*;
@@ -19,6 +20,7 @@ use crate::Config;
 use crate::color::str_colorize;
 use crate::items::*;
 use crate::prepare_commands::*;
+use crate::gpu::*;
 
 // std
 use std::path::PathBuf;
@@ -28,6 +30,7 @@ use std::env; // Reading the environment and useing the threads
 // colored
 use colored::Colorize; // Colors
 
+use futures::stream::iter;
 // serde
 pub use serde::{Deserialize, Serialize};
 
@@ -59,7 +62,7 @@ const APP_NAME: &str = "afp";
 const CONFIG_FILE: &str = "config.json";
 // --- End of Constants ---
 
-fn main() { block_on(async_main()) }
+fn main() { block_on(async_main()) } // Run the async main function.
 
 async fn async_main() { // main function
     let _homedir: PathBuf = get_home_dir(); // get the home directory
@@ -71,6 +74,7 @@ async fn async_main() { // main function
      
     // --- Modules ---
     // --- External Modules ---
+    let get_gpu_async = get_gpu();
     let osinfo = get_osinfo(); // get the OS information
     let user_name: String = get_user_name(); // get the user name
     let mut distro_logo = gen_logo(&config.logo, &osinfo.OSPretty, &config.color);
@@ -93,7 +97,12 @@ async fn async_main() { // main function
     // --- Synchrisation ---
     let memory = memory_async.await;
     let output_vec = output_vec_async.await;
+    let gpu_vec = get_gpu_async.await;
     // --- End of Synchrisation ---
+
+    // --- Test Print ---
+    
+    // --- End of Test Print ---
 
     // --- Print ---
     let mut counter = 0;
@@ -139,10 +148,54 @@ async fn async_main() { // main function
                     &output_vec[counter]);
                 counter += 1;
             },
+
             Item::LineCount(current_item) => {
                 println!("{}{}{}", distro_logo.display(),
                 str_colorize(&current_item.title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
                 &output_vec[counter]); // Prints out the line count of a command.
+                counter += 1;
+            },
+
+            Item::GPU(current_item) => {
+                let mut gpu_counter: u8 = 0;
+                if current_item.brand {
+                    for gpu in gpu_vec.iter() {
+
+                        gpu_counter += 1;
+                        let title = gen_title_iter(&current_item.title, &gpu_counter);
+
+                        match gpu.short_brand {
+                            GPUBrand::Intel => {
+                                println!("{}{}{} {}", distro_logo.display(),
+                                    str_colorize(&title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                                    &gpu.brand.blue(), &gpu.name)
+                            },
+                            GPUBrand::AMD => {
+                                println!("{}{}{} {}", distro_logo.display(),
+                                    str_colorize(&title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                                    &gpu.brand.red(), &gpu.name)
+                            },
+                            GPUBrand::NVIDIA => {
+                                println!("{}{}{} {}", distro_logo.display(),
+                                    str_colorize(&title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                                    &gpu.brand.green(), &gpu.name)
+                            },
+                            GPUBrand::Other => {
+                                println!("{}{}{} {}", distro_logo.display(),
+                                    str_colorize(&title, &logo_color.to_owned(), &config.color, &current_item.color).bold(),
+                                    &gpu.brand.green(), &gpu.name)
+                            }
+                        }
+                    }
+                } else {
+                    for gpu in gpu_vec.iter() {
+
+                        gpu_counter += 1;
+                        let title = gen_title_iter(&current_item.title, &gpu_counter);
+                        println!("{}{}{}", distro_logo.display(),
+                            str_colorize(&title, &logo_color.to_owned(), &config.color, &current_item.color).bold(), &gpu.name)
+                    }
+                }
             }
         }
     }

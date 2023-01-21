@@ -119,3 +119,12 @@ pub fn get_osinfo() -> Osinfo { // Returns the OS information as 'Osinfo'
 
     return osinfo.to_norm(); // Converts osinfo from OsinfoOpt to Osinfo and returns it
 }
+
+pub fn gen_title_iter(title: &String, counter: &u8) -> String {
+    let title_vec: Vec<&str> = title.split("$").collect();
+    if title_vec.len() == 2 {
+        return format!("{}{}{}", title_vec[0], counter, title_vec[1]);
+    } else {
+        return String::from(title_vec[0]);
+    }
+}
