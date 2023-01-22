@@ -19,6 +19,7 @@ pub struct Config {
     pub color: Kolor,
     pub logo: String,
     pub items: Vec<Item>,
+    pub allow_lazy: bool,
 }
 // --- End of struct section ---
 
@@ -56,6 +57,7 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
 {
     "logo": "auto",
     "color": "None",
+    "allow_lazy": true,
     "items": [
         {
             "UserHost": {
@@ -117,7 +119,8 @@ fn open_config_file(cf: &mut PathBuf) -> String { // cf stands for config file
             "GPU": {
                 "title": "GPU$: ",
                 "color": "None",
-                "brand": true
+                "brand": true,
+                "lazy": true
             }
         },
         {

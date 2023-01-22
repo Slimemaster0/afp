@@ -97,5 +97,6 @@ pub struct  CPU {
 pub struct GPU {
     pub title: String,
     pub color: Kolor,
-    pub brand: bool
+    pub brand: bool,
+    pub lazy: bool
 }

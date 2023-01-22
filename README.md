@@ -39,6 +39,7 @@ The default config:
 {
     "logo": "auto",
     "color": "None",
+    "allow_lazy": true,
     "items": [
         {
             "UserHost": {
@@ -100,7 +101,8 @@ The default config:
             "GPU": {
                 "title": "GPU$: ",
                 "color": "None",
-                "brand": true
+                "brand": true,
+		"lazy": true
             }
         },
         {

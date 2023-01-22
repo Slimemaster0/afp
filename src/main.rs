@@ -74,7 +74,7 @@ async fn async_main() { // main function
      
     // --- Modules ---
     // --- External Modules ---
-    let get_gpu_async = get_gpu();
+    let get_gpu_async = get_gpu(&config.items, &config.allow_lazy);
     let osinfo = get_osinfo(); // get the OS information
     let user_name: String = get_user_name(); // get the user name
     let mut distro_logo = gen_logo(&config.logo, &osinfo.OSPretty, &config.color);
