@@ -2,6 +2,13 @@
 name = "afp"
 version = "0.1.10"
 edition = "2021"
+rust-version = "1.65.0"
+repository = "https://github.com/Slimemaster0/afp"
+description = "A fast fetch program written in rust"
+readme = "README.md"
+homepage = "https://github.com/Slimemaster0/afp"
+license = "GPL-3.0"
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
