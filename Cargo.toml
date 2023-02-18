@@ -14,7 +14,7 @@ license-file = "LICENSE"
 
 [dependencies]
 colored = "2.0.0"
-serde = { version = "*", features = ["derive"] }
-serde_json = "*"
-systemstat = "*"
+serde = { version = "1.0.151", features = ["derive"] }
+serde_json = "1.0.91"
+systemstat = "0.2.2"
 futures = "0.3"
